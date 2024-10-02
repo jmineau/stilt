@@ -1,0 +1,156 @@
+# STILT YAML Configuration
+# For documentation, see https://uataq.github.io/stilt/
+# Ben Fasoli & James Mineau
+
+# User inputs
+project: "{{project}}"
+stilt_wd: "{{wd}}/{{project}}"
+output_wd: "{{wd}}/{{project}}/out"
+lib_loc: null  # Use default library location
+
+# Parallel simulation settings
+n_cores: 1
+n_nodes: 1
+processes_per_node: 1
+slurm: false
+slurm_options:
+  time: '300:00:00'
+  account: 'lin-kp'
+  partition: 'lin-kp'
+
+# Receptor location(s)
+# Can also be defined in <stilt_wd>/in/in.csv
+receptors:
+  - run_time: '2015-12-10 00:00:00'
+    lati: 40.5
+    long: -112.0
+    zagl: 5
+
+# Footprint grid settings
+hnf_plume: true
+projection: '+proj=longlat'
+smooth_factor: 1
+time_integrate: false
+xmn: null
+xmx: null
+ymn: null
+ymx: null
+xres: 0.01
+yres: 0.01
+
+# Meteorological data input
+met_path: '<path_to_arl_meteorological_data>'
+met_file_format: '%Y%m%d.%Hz.hrrra'
+n_hours_per_met_file: 6
+met_subgrid_buffer: 0.2
+met_subgrid_enable: false
+met_subgrid_levels: null
+n_met_min: 1
+
+# Model control
+n_hours: -24
+numpar: 1000
+rm_dat: true
+run_foot: true
+run_trajec: true
+simulation_id: null
+timeout: 3600
+varsiwant:
+  - time
+  - indx
+  - long
+  - lati
+  - zagl
+  - foot
+  - mlht
+  - dens
+  - samt
+  - sigw
+  - tlgr
+
+# Transport and dispersion settings
+capemin: -1
+cmass: 0
+conage: 48
+cpack: 1
+delt: 1
+dxf: 1
+dyf: 1
+dzf: 0.01
+efile: ''
+emisshrs: 0.01
+frhmax: 3
+frhs: 1
+frme: 0.1
+frmr: 0
+frts: 0.1
+frvs: 0.01
+hscale: 10800
+ichem: 8
+idsp: 2
+initd: 0
+k10m: 1
+kagl: 1
+kbls: 1
+kblt: 5
+kdef: 0
+khinp: 0
+khmax: 9999
+kmix0: 150
+kmixd: 3
+kmsl: 0
+kpuff: 0
+krand: 4
+krnd: 6
+kspl: 1
+kwet: 1
+kzmix: 0
+maxdim: 1
+maxpar: null  # default to numpar
+mgmin: 10
+mhrs: 9999
+nbptyp: 1
+ncycl: 0
+ndump: 0
+ninit: 1
+nstr: 0
+nturb: 0
+nver: 0
+outdt: 0
+p10f: 1
+pinbc: ''
+pinpf: ''
+poutf: ''
+qcycle: 0
+rhb: 80
+rht: 60
+splitf: 1
+tkerd: 0.18
+tkern: 0.18
+tlfrac: 0.1
+tout: 0
+tratio: 0.75
+tvmix: 1
+veght: 0.5
+vscale: 200
+vscaleu: 200
+vscales: -1
+wbbh: 0
+wbwf: 0
+wbwr: 0
+wvert: false
+w_option: 0
+zicontroltf: 0
+ziscale:
+  - [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+z_top: 25000
+
+# Transport error settings
+horcoruverr: null
+siguverr: null
+tluverr: null
+zcoruverr: null
+
+horcorzierr: null
+sigzierr: null
+tlzierr: null

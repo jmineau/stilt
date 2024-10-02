@@ -3,161 +3,166 @@
 # For documentation, see https://uataq.github.io/stilt/
 # Ben Fasoli
 
+# Read input configuration -----------------------------------------------------
+
+# Need to load the yaml package before other dependencies
+lib.loc <- NULL  # initially set to NULL
+if (!require(yaml, character.only = T, lib.loc = lib.loc)) {
+  install.packages('yaml', repo = 'https://cran.rstudio.com/', lib = lib.loc)
+  require(yaml, character.only = T, lib.loc = lib.loc)
+}
+
+# Read the configuration file
+config <- yaml.load_file('config.yaml')
+
+# Read in.csv
+in_csv_file <- 'in/in.csv'
+in_csv <- read.csv(, stringsAsFactors = F)
+if (nrow > 0) {
+  # Replace config values with simulation-specific values from in.csv
+  for (col in colnames(in_csv)) {
+    config[[col]] <- in_csv[[col]]
+  }
+}
+
+
 # User inputs ------------------------------------------------------------------
-project <- '{{project}}'
-stilt_wd <- file.path('{{wd}}', project)
-output_wd <- file.path(stilt_wd, 'out')
-lib.loc <- .libPaths()[1]
+project <- config$project
+stilt_wd <- config$stilt_wd
+output_wd <- config$output_wd
+lib.loc <- config$lib_loc
 
 # Parallel simulation settings
-n_cores <- 1
-n_nodes <- 1
-slurm   <- n_nodes > 1
-slurm_options <- list(
-  time      = '300:00:00',
-  account   = 'lin-kp',
-  partition = 'lin-kp'
-)
-
-# Simulation timing, yyyy-mm-dd HH:MM:SS (UTC)
-t_start <- '2015-12-10 00:00:00'
-t_end   <- '2015-12-10 00:00:00'
-run_times <- seq(from = as.POSIXct(t_start, tz = 'UTC'),
-                 to   = as.POSIXct(t_end, tz = 'UTC'),
-                 by   = 'hour')
-
-# Receptor location(s)
-lati <- 40.5
-long <- -112.0
-zagl <- 5
+n_cores <- config$n_cores
+n_nodes <- config$n_nodes
+slurm <- config$slurm & n_cores > 1
+slurm_options <- config$slurm_options
 
 # Expand the run times, latitudes, and longitudes to form the unique receptors
 # that are used for each simulation
-receptors <- expand.grid(run_time = run_times, lati = lati, long = long,
-                         zagl = zagl, KEEP.OUT.ATTRS = F, stringsAsFactors = F)
+receptors <- expand.grid(run_time = run_times, lati = receptors$lati, long = receptors$long,
+                         zagl = receptors$zagl, KEEP.OUT.ATTRS = F, stringsAsFactors = F)
 
 # Footprint grid settings, must set at least xmn, xmx, ymn, ymx below
-hnf_plume <- T
-projection <- '+proj=longlat'
-smooth_factor <- 1
-time_integrate <- F
-xmn <- NA
-xmx <- NA
-ymn <- NA
-ymx <- NA
-xres <- 0.01
-yres <- xres
+hnf_plume <- config$hnf_plume
+projection <- config$projection
+smooth_factor <- config$smooth_factor
+time_integrate <- config$time_integrate
+xmn <- config$xmn
+xmx <- config$xmx
+ymn <- config$ymn
+ymx <- config$ymx
+xres <- config$xres
+yres <- config$yres
 
 # Meteorological data input
-met_path           <- '<path_to_arl_meteorological_data>'
-met_file_format    <- '%Y%m%d.%Hz.hrrra'
-met_subgrid_buffer <- 0.2
-met_subgrid_enable <- F
-met_subgrid_levels <- NA
-n_met_min          <- 1
+met_path <- config$met_path
+met_file_format <- config$met_file_format
+met_subgrid_buffer <- config$met_subgrid_buffer
+met_subgrid_enable <- config$met_subgrid_enable
+met_subgrid_levels <- config$met_subgrid_levels
+n_met_min <- config$n_met_min
 
 # Model control
-n_hours       <- -24
-numpar        <- 1000
-rm_dat        <- T
-run_foot      <- T
-run_trajec    <- T
-simulation_id <- NA
-timeout       <- 3600
-varsiwant     <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens',
-                   'samt', 'sigw', 'tlgr')
+n_hours <- config$n_hours
+numpar <- config$numpar
+rm_dat <- config$rm_dat
+run_foot <- config$run_foot
+run_trajec <- config$run_trajec
+simulation_id <- config$simulation_id
+timeout <- config$timeout
+varsiwant <- config$varsiwant
 
 # Transport and dispersion settings
-capemin     <- -1
-cmass       <- 0
-conage      <- 48
-cpack       <- 1
-delt        <- 1
-dxf         <- 1
-dyf         <- 1
-dzf         <- 0.01
-efile       <- ''
-emisshrs    <- 0.01
-frhmax      <- 3
-frhs        <- 1
-frme        <- 0.1
-frmr        <- 0
-frts        <- 0.1
-frvs        <- 0.01
-hscale      <- 10800
-ichem       <- 8
-idsp        <- 2
-initd       <- 0
-k10m        <- 1
-kagl        <- 1
-kbls        <- 1
-kblt        <- 5
-kdef        <- 0
-khinp       <- 0
-khmax       <- 9999
-kmix0       <- 150
-kmixd       <- 3
-kmsl        <- 0
-kpuff       <- 0
-krand       <- 4
-krnd        <- 6
-kspl        <- 1
-kwet        <- 1
-kzmix       <- 0
-maxdim      <- 1
-maxpar      <- numpar
-mgmin       <- 10
-mhrs        <- 9999
-nbptyp      <- 1
-ncycl       <- 0
-ndump       <- 0
-ninit       <- 1
-nstr        <- 0
-nturb       <- 0
-nver        <- 0
-outdt       <- 0
-p10f        <- 1
-pinbc       <- ''
-pinpf       <- ''
-poutf       <- ''
-qcycle      <- 0
-rhb         <- 80
-rht         <- 60
-splitf      <- 1
-tkerd       <- 0.18
-tkern       <- 0.18
-tlfrac      <- 0.1
-tout        <- 0
-tratio      <- 0.75
-tvmix       <- 1
-veght       <- 0.5
-vscale      <- 200
-vscaleu     <- 200
-vscales     <- -1
-wbbh        <- 0
-wbwf        <- 0
-wbwr        <- 0
-wvert       <- FALSE
-w_option    <- 0
-zicontroltf <- 0
-ziscale     <- rep(list(rep(1, 24)), nrow(receptors))
-z_top       <- 25000
+capemin <- config$capemin
+cmass <- config$cmass
+conage <- config$conage
+cpack <- config$cpack
+delt <- config$delt
+dxf <- config$dxf
+dyf <- config$dyf
+dzf <- config$dzf
+efile <- config$efile
+emisshrs <- config$emisshrs
+frhmax <- config$frhmax
+frhs <- config$frhs
+frme <- config$frme
+frmr <- config$frmr
+frts <- config$frts
+frvs <- config$frvs
+hscale <- config$hscale
+ichem <- config$ichem
+idsp <- config$idsp
+initd <- config$initd
+k10m <- config$k10m
+kagl <- config$kagl
+kbls <- config$kbls
+kblt <- config$kblt
+kdef <- config$kdef
+khinp <- config$khinp
+khmax <- config$khmax
+kmix0 <- config$kmix0
+kmixd <- config$kmixd
+kmsl <- config$kmsl
+kpuff <- config$kpuff
+krand <- config$krand
+krnd <- config$krnd
+kspl <- config$kspl
+kwet <- config$kwet
+kzmix <- config$kzmix
+maxdim <- config$maxdim
+maxpar <- ifelse(is.null(config$maxpar), numpar, config$maxpar)
+mgmin <- config$mgmin
+mhrs <- config$mhrs
+nbptyp <- config$nbptyp
+ncycl <- config$ncycl
+ndump <- config$ndump
+ninit <- config$ninit
+nstr <- config$nstr
+nturb <- config$nturb
+nver <- config$nver
+outdt <- config$outdt
+p10f <- config$p10f
+pinbc <- config$pinbc
+pinpf <- config$pinpf
+poutf <- config$poutf
+qcycle <- config$qcycle
+rhb <- config$rhb
+rht <- config$rht
+splitf <- config$splitf
+tkerd <- config$tkerd
+tkern <- config$tkern
+tlfrac <- config$tlfrac
+tout <- config$tout
+tratio <- config$tratio
+tvmix <- config$tvmix
+veght <- config$veght
+vscale <- config$vscale
+vscaleu <- config$vscaleu
+vscales <- config$vscales
+wbbh <- config$wbbh
+wbwf <- config$wbwf
+wbwr <- config$wbwr
+wvert <- config$wvert
+w_option <- config$w_option
+zicontroltf <- config$zicontroltf
+ziscale <- rep(config$ziscale, nrow(receptors))
+z_top <- config$z_top
 
 # Transport error settings
-horcoruverr <- NA
-siguverr    <- NA
-tluverr     <- NA
-zcoruverr   <- NA
+horcoruverr <- config$horcoruverr
+siguverr <- config$siguverr
+tluverr <- config$tluverr
+zcoruverr <- config$zcoruverr
 
-horcorzierr <- NA
-sigzierr    <- NA
-tlzierr     <- NA
+horcorzierr <- config$horcorzierr
+sigzierr <- config$sigzierr
+tlzierr <- config$tlzierr
 
-
-# Interface to mutate the output object with user defined functions
-before_trajec <- function() {output}
-before_footprint <- function() {output}
-
+# Source custom functions 
+# - Includes before_trajec and before_footprint functions to manipulate the simulation output
+rsc <- dir(file.path(stilt_wd, 'r', 'custom_src'), pattern = '.*\\.r$', full.names = T)
+invisible(lapply(rsc, source))
 
 # Source dependencies ----------------------------------------------------------
 setwd(stilt_wd)
