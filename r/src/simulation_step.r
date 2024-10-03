@@ -330,10 +330,11 @@ simulation_step <- function(before_footprint = list(function() {output}),
                                              winderrtf = winderrtf)
       }
 
-      if (write_trajec) {
-        # Save output object and symlink to out/particles
-        trajec_file <- write_output(rundir, simulation_id, output)
+      # Write output to disk
+      trajec_file <- write_output(rundir, simulation_id, output, write_trajec)
 
+      if (!is.null(trajec_file)) {
+        # Symlink trajectory to out/particles
         link <- file.path(output_wd, 'particles', basename(trajec_file))
         suppressWarnings(file.symlink(trajec_file, link))
       }
