@@ -11,13 +11,15 @@
 #'   - particle: The particle trajectory data
 #'   - particle_error: The error data if it exists (optional)
 #'   - particle_error_params: The HYSPLIT error parameters if they exist (optional)
+#' @param write_trajec Logical indicating whether to write the trajectory output to disk. Defaults to TRUE.
 #' @return The path to the trajectory file
 #' 
 #' @import arrow
 #' @import jsonlite
 #' @export
 
-write_output <- function(rundir, simulation_id, output) {
+write_output <- function(rundir, simulation_id, output,
+                         write_trajec = T) {
 
   # Define output files
   input_file <- file.path(rundir, paste0(simulation_id, '_input.json'))
@@ -37,7 +39,7 @@ write_output <- function(rundir, simulation_id, output) {
                 met_files=output$met_files)
   
   # Add error data if it exists
-  if (!is.null(output$particle_error)) {
+  if (!is.null(output$particle_error) & write_trajec) {
     # Write error to parquet
     write_parquet(output$particle_error, error_file)
 
@@ -48,8 +50,12 @@ write_output <- function(rundir, simulation_id, output) {
   # Write input to JSON
   write_json(input, json_file, pretty=T, auto_unbox=T)
 
-  # Write trajectory to parquet
-  write_parquet(output$particle, traj_file)
+  if (write_trajec) {
+    # Write trajectory to parquet
+    write_parquet(output$particle, traj_file)
+  } else {
+    traj_file <- NULL
+  }
 
   return(traj_file)
 }
