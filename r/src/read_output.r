@@ -39,7 +39,7 @@ read_output <- function(rundir, simulation_id) {
     receptor = input$receptor,
     namelist = input$namelist,
     params = input$params,
-    particle = particle
+    particle = particle,
     met_files = input$met_files
   )
 
