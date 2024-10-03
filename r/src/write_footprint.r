@@ -128,7 +128,7 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
     ncatt_put(nc, 0, 'documentation', 'github.com/uataq/stilt')
     ncatt_put(nc, 0, 'title', 'STILT Footprint')
     ncatt_put(nc, 0, 'time_created', format(Sys.time(), tz = 'UTC'))
-    ncatt_put(nc, 0, 'r_run_time', receptor$run_time)
+    ncatt_put(nc, 0, 'r_run_time', format(receptor$run_time))
     ncatt_put(nc, 0, 'r_lati', receptor$lati)
     ncatt_put(nc, 0, 'r_long', receptor$long)
     ncatt_put(nc, 0, 'r_zagl', receptor$zagl)
