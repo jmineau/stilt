@@ -17,8 +17,8 @@
 #'   .nc files are saved in the CF-1.4 (Climate and Forcast Metadata) convention
 #'   for native use with raster::brick() and raster::raster(). rds files do not
 #'   require any additional libraries and have better compression
-#' @param r_run_time receptor run time as a POSIXct object. Can be NULL
-#'   resulting in NULL timestamp outputs
+#' @param receptor receptor information: run_time, lati, long, zagl. run_time
+#'   must be a POSIXct object. Can be NULL resulting in NULL timestamp outputs
 #' @param projection proj4 string defining the map projection of the footprint
 #'   netCDF output
 #' @param time_integrate logical indicating whether to integrate footprint over
@@ -69,7 +69,7 @@ wrap_longitude_antimeridian <- function(x) {
   ifelse(x < 0, x + 360, x)
 }
 
-calc_footprint <- function(p, output = NULL, r_run_time,
+calc_footprint <- function(p, output = NULL, receptor,
                            projection = '+proj=longlat',
                            smooth_factor = 1, time_integrate = F,
                            xmn, xmx, xres, ymn, ymx, yres = xres) {
@@ -253,13 +253,14 @@ calc_footprint <- function(p, output = NULL, r_run_time,
   
   # Determine time to use in output files
   if (time_integrate) {
-    time_out <- as.numeric(r_run_time) 
+    time_out <- as.numeric(receptor$run_time) 
   } else {
-    time_out <- as.numeric(r_run_time + layers * interval)
+    time_out <- as.numeric(receptor$run_time + layers * interval)
   }
   
   # Set footprint metadata and write to file
-  write_footprint(foot, output = output, glong = glong, glati = glati,
+  write_footprint(foot, output = output, receptor = receptor,
+                  glong = glong, glati = glati,
                   projection = projection, xres = xres, yres = yres,
                   time_out = time_out)
 }

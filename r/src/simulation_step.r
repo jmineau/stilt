@@ -99,7 +99,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
                             tlfrac = 0.1,
                             tluverr = NA,
                             tlzierr = NA,
-                            tout = 0, 
+                            tout = 0,
                             tratio = 0.75,
                             tvmix = 1,
                             varsiwant = c('time', 'indx', 'long', 'lati',
@@ -113,6 +113,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
                             wbbh = 0,
                             wbwf = 0,
                             wbwr = 0,
+                            write_trajec = T,
                             wvert = FALSE,
                             xmn,
                             xmx,
@@ -247,7 +248,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
     # run_trajec determines whether to try using existing trajectory files or to
     # recycle existing files
     output <- list()
-    output$file <- file.path(rundir, paste0(simulation_id, '_traj.rds'))
+    output$namelist <- namelist
     
     if (run_trajec) {
       # Ensure necessary files and directory structure are established in the
@@ -286,6 +287,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
           return()
         }
       }
+      output$met_files <- met_files
 
       # Execute particle trajectory simulation, and read results into data frame
       output$receptor <- list(run_time = r_run_time,
@@ -327,25 +329,28 @@ simulation_step <- function(before_footprint = list(function() {output}),
                                              horcorzierr = horcorzierr,
                                              winderrtf = winderrtf)
       }
-      
-      # Save output object to compressed rds file and symlink to out/particles
-      saveRDS(output, output$file)
-      link_files(output$file, file.path(output_wd, 'particles'))
-      
+
+      if (write_output) {
+        # Save output object and symlink to out/particles
+        trajec_file <- write_output(rundir, simulation_id, output)
+
+        link <- file.path(output_wd, 'particles', basename(trajec_file))
+        suppressWarnings(file.symlink(trajec_file, link))
+      }
     } else {
       # If user opted to recycle existing trajectory files, read in the recycled
       # file to a data frame with an adjusted timestamp and index for the
       # simulation step. If none exists, report an error and proceed
-      if (!file.exists(output$file)) {
-        warning('simulation_step(): No _traj.rds file found in ', rundir,
+      output <- read_output(rundir, simulation_id)
+      if (is.null(output)) {
+        warning('simulation_step(): No trajectory file found in ', rundir,
                 '\n  skipping this receptor and trying the next...')
         return()
       }
-      output <- readRDS(output$file)
     }
     
     # Exit if not performing footprint calculations
-    if (!run_foot) return(invisible(output$file))
+    if (!run_foot) return(output)
     
     # User defined function to mutate the output object
     output <- before_footprint()
@@ -360,7 +365,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
     # resultant footprint and various attributes
     foot_file <- file.path(rundir, paste0(simulation_id, '_foot.nc'))
     foot <- calc_footprint(output$particle, output = foot_file,
-                           r_run_time = r_run_time,
+                           receptor = output$receptor,
                            projection = projection,
                            smooth_factor = smooth_factor,
                            time_integrate = time_integrate,

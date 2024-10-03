@@ -2,28 +2,23 @@
 
 The model outputs can be found in the directory configured with `output_wd` (defaults to `<stilt_wd>/out/`, see [project structure](http://localhost:3000/#/project-structure)). STILT outputs two files for analysis -
 
-- a `<simulation_id>_traj.rds` file containing the trajectories of the particle ensemble
+- a `<simulation_id>_traj.parquet` file containing the trajectories of the particle ensemble
 - a `<simulation_id>_foot.nc` file containing gridded footprint values and metadata
 
 Simulation identifiers follow a `yyyymmddHHMM_lati_long_zagl` convention, see [project structure](project-structure.md?id=outby-id).
 
 ## Particle trajectories
 
-Particle trajectories and simulation configuration information are packaged and saved in a compressed `.rds` file ([serialized single R object](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRDS.html)) with the naming convention with the naming convention `<simulation_id>_traj.rds`. Preserving the particle trajectories enables regridding the footprints at a later time without the computational cost of recalculating particle trajectories.
+Particle trajectories containing each particle's position and characteristics over time are packaged and saved with the naming convention `<simulation_id>_traj.parquet`. Preserving the particle trajectories enables regridding the footprints at a later time without the computational cost of recalculating particle trajectories.
 
-This object can be loaded with `readRDS(<path>)` and is structured as
+This object can be loaded using `R` with `arrow::read_parquet()`
 
 ```r
-traj <- readRDS('<simulation_id>_traj.rds')
+library(arrow)
+
+traj <- read_parquet('<simulation_id>_traj.parquet')
 str(traj)
-# List of 4
-# $ file    : chr "<stilt_wd>/out/by-id/<simulation_id>/<simulation_id>_traj.rds
-# $ receptor:List of 4
-# ..$ run_time: POSIXct[1:1], format: "1983-09-18 21:00:00"
-# ..$ lati    : num 39.6
-# ..$ long    : num -80.4
-# ..$ zagl    : num 10
-# $ particle:Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	11712136 obs. of  12 variables:
+# .Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	11712136 obs. of  12 variables:
 # ..$ time                : num [1:11712136] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...
 # ..$ indx                : num [1:11712136] 1 2 3 4 5 6 7 8 9 10 ...
 # ..$ long                : num [1:11712136] -80.4 -80.4 -80.4 -80.4 -80.4 ...
@@ -38,7 +33,22 @@ str(traj)
 # ..$ foot_no_hnf_dilution: num [1:11712136] 0.00224 0.00224 0.00224 0.00224 0.00224 ...
 ```
 
-The `traj$receptor` object is a named list with the time and location of the release point for the simulation. The `traj$particle` object is a data frame containing each particle's position and characteristics over time.
+or using `Python` with a combination of `pyarrow` and `pandas`
+
+```python
+import pandas as pd
+import pyarrow
+
+particle = pd.read_parquet('<simulation_id>_traj.parquet')
+particle.head()
+# |    |   time |   indx |   long |   lati |   zagl |    foot |   mlht |   dens |   samt |   sigw |   tlgr |   foot_no_hnf_dilution |
+# |---:|-------:|-------:|-------:|-------:|-------:|--------:|-------:|-------:|-------:|-------:|-------:|-----------------------:|
+# |  0 |     -1 |      1 |  -80.4 |   39.6 |   5.63 | 0.0626  |   1459 |    1.1 |      1 |   1.08 |   1.67 |              0.00224   |
+# |  1 |     -1 |      2 |  -80.4 |   39.6 |  41.37 | 0.043   |   1459 |    1.1 |      1 |   1.09 |   4.98 |              0.00224   |
+# |  2 |     -1 |      3 |  -80.4 |   39.6 |  30.95 | 0.043   |   1459 |    1.1 |      1 |   1.09 |   4.98 |              0.00224   |
+# |  3 |     -1 |      4 |  -80.4 |   39.6 |   3.32 | 0.0626  |   1459 |    1.1 |      1 |   1.08 |   1.67 |              0.00224   |
+# |  4 |     -1 |      5 |  -80.4 |   39.6 |  28.88 | 0.0627  |   1459 |    1.1 |      1 |   1.08 |   1.67 |              0.00224   |
+```
 
 ## Gridded footprints
 
@@ -78,6 +88,10 @@ variables:
 		:documentation = "github.com/uataq/stilt" ;
 		:title = "STILT Footprint" ;
 		:time_created = "1992-04-15 00:00:00" ;
+		:r_run_time = "2000-02-08 00:00:00" ;
+		:r_lati = 40.5 ;
+		:r_long = -112.0 ;
+		:r_zagl = 5 ;
 }
 
 ```
@@ -147,6 +161,10 @@ nc
 #         documentation: github.com/uataq/stilt
 #         title: STILT Footprint
 #         time_created: 1992-04-15 00:00:00
+#         r_run_time: 2000-02-08 00:00:00
+#         r_lati: 40.5
+#         r_long: -112
+#         r_zagl: 5
 ```
 
 ---
