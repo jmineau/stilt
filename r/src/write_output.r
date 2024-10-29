@@ -22,33 +22,33 @@ write_output <- function(rundir, simulation_id, output,
                          write_trajec = T) {
 
   # Define output files
-  input_file <- file.path(rundir, paste0(simulation_id, '_input.json'))
+  config_file <- file.path(rundir, paste0(simulation_id, '_config.json'))
   traj_file <- file.path(rundir, paste0(simulation_id, '_traj.parquet'))
   error_file <- file.path(rundir, paste0(simulation_id, '_error.parquet'))
 
   # Remove existing output files if they exist
-  for (file in c(input_file, traj_file, error_file)) {
+  for (file in c(config_file, traj_file, error_file)) {
     if (file.exists(file))
       system(paste('rm', file))
   }
 
   # Merge namelist, params, and receptor
-  input <- list(receptor=output$receptor,
+  config <- list(receptor=output$receptor,
                 namelist=output$namelist,
                 params=output$params,
                 met_files=output$met_files)
-  
+
   # Add error data if it exists
   if (!is.null(output$particle_error) & write_trajec) {
     # Write error to parquet
     write_parquet(output$particle_error, error_file)
 
-    # Add error parameters to input
-    input$particle_error_params <- output$particle_error_params
+    # Add error parameters to config
+    config$particle_error_params <- output$particle_error_params
   }
 
-  # Write input to JSON
-  write_json(input, input_file, pretty=T, auto_unbox=T)
+  # Write config to JSON
+  write_json(config, config_file, pretty=T, auto_unbox=T)
 
   if (write_trajec) {
     # Write trajectory to parquet

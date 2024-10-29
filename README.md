@@ -26,10 +26,7 @@
 
 ## `jmineau` changelog
 
-- 2024-10-02 : Restructured output. Simulation input information is stored neatly in a json, including receptor information. Trajectory output is now stored as parquet files, which allows languages other than `R` to read them. Additionally added `write_trajec` option to disable trajectory output. Added receptor information to the footprint netcdf attributes, including run_time.
-- 2024-09-30 : Implemented `n_hours_per_met_file` to properly find the correct met file for the simulation when run in foward
-- 2024-09-14 : Relative linking so that soft links don't break when moving `stilt_wd`
-- 2024-09-14 : Added `processes_per_node` option to allow for hyperthreading when using `slurm`
+- 2024-10-02 : Restructured output. Simulation configuration information is stored neatly in a json, including receptor information. Trajectory output is now stored as parquet files, which allows languages other than `R` to read them. Additionally added `write_trajec` option to disable trajectory output. Added receptor information to the footprint netcdf attributes, including run_time.
 - 2024-09-14 : Set `lib.loc <- NULL` to allow for auto-selection of the library path and to use site libraries in HPC environments
 
 ## Docs

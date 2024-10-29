@@ -19,7 +19,7 @@
 read_output <- function(rundir, simulation_id) {
 
   # Define output files
-  input_file <- file.path(rundir, paste0(simulation_id, '_input.json'))
+  config_file <- file.path(rundir, paste0(simulation_id, '_config.json'))
   traj_file <- file.path(rundir, paste0(simulation_id, '_traj.parquet'))
   error_file <- file.path(rundir, paste0(simulation_id, '_error.parquet'))
 
@@ -28,25 +28,25 @@ read_output <- function(rundir, simulation_id) {
     return(NULL)
   }
 
-  # Read input JSON file
-  input <- read_json(input_file)
+  # Read config JSON file
+  config <- read_json(config_file)
 
   # Read trajectory parquet file
   particle <- read_parquet(traj_file)
 
   # Initialize output list
   output <- list(
-    receptor = input$receptor,
-    namelist = input$namelist,
-    params = input$params,
+    receptor = config$receptor,
+    namelist = config$namelist,
+    params = config$params,
     particle = particle,
-    met_files = input$met_files
+    met_files = config$met_files
   )
 
   # Read error data if it exists
   if (file.exists(error_file)) {
     output$particle_error <- read_parquet(error_file)
-    output$particle_error_params <- input$particle_error_params
+    output$particle_error_params <- config$particle_error_params
   }
 
   return(output)
