@@ -12,7 +12,7 @@ exe/
 out/
   by-id/
     yyyymmddHH_lati_long_zagl/
-      yyyymmddHH_lati_long_zagl_input.json
+      yyyymmddHH_lati_long_zagl_config.json
       yyyymmddHH_lati_long_zagl_traj.parquet
       yyyymmddHH_lati_long_zagl_foot.nc
       hycs_std
@@ -60,7 +60,7 @@ Contains simulation files by simulation id, with the naming convention `yyyymmdd
 
 This becomes the working directory for each unique simulation, containing symbolic links to all of the shared files in `exe/` as well as simulation specific `CONTROL`, `SETUP.CFG`, and output files.
 
-STILT input is aggregated for each simulation into a single `yyyymmddHH_lati_long_zagl_input.json` file. This file contains all of input parameters for the simulation, including the receptor location & time, the meteorological files used, and the model configuration.
+STILT configuration is aggregated for each simulation into a single `yyyymmddHH_lati_long_zagl_config.json` file. This file contains all of input parameters for the simulation, including the receptor location & time, the meteorological files used, and the model configuration.
 
 STILT outputs two files for analysis. The trajectories of the particle ensemble are saved to a `<simulation_id>_traj.parquet` file. Gridded footprints are saved to a `<simulation_id>_foot.nc` file. For guidance on working with these output files, see [output files](output-files.md).
 
