@@ -48,7 +48,7 @@ write_output <- function(rundir, simulation_id, output,
   }
 
   # Write config to JSON
-  write_json(config, config_file, pretty=T, auto_unbox=T)
+  write_json(config, config_file, pretty=T, auto_unbox=T, digits=NA)
 
   if (write_trajec) {
     # Write trajectory to parquet
