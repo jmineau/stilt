@@ -60,16 +60,17 @@ met_subgrid_levels <- NA
 n_met_min          <- 1
 
 # Model control
-n_hours       <- -24
-numpar        <- 1000
-rm_dat        <- T
-run_foot      <- T
-run_trajec    <- T
-simulation_id <- NA
-timeout       <- 3600
-varsiwant     <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens',
+n_hours         <- -24
+numpar          <- 1000
+reset_output_wd <- T
+rm_dat          <- T
+run_foot        <- T
+run_trajec      <- T
+simulation_id   <- NA
+timeout         <- 3600
+varsiwant       <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens',
                    'samt', 'sigw', 'tlgr')
-write_trajec  <- T
+write_trajec    <- T
 
 # Transport and dispersion settings
 capemin     <- -1
@@ -172,9 +173,9 @@ source('r/dependencies.r')
 # Outputs are organized in three formats. by-id contains simulation files by
 # unique simulation identifier. particles and footprints contain symbolic links
 # to the particle trajectory and footprint files in by-id
-system(paste0('rm -r ', output_wd, '/footprints'), ignore.stderr = T)
-if (run_trajec) {
+if (reset_output_wd) {
   system(paste0('rm -r ', output_wd, '/by-id'), ignore.stderr = T)
+  system(paste0('rm -r ', output_wd, '/footprints'), ignore.stderr = T)
   system(paste0('rm -r ', output_wd, '/met'), ignore.stderr = T)
   system(paste0('rm -r ', output_wd, '/particles'), ignore.stderr = T)
 }

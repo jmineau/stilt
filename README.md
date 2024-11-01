@@ -26,6 +26,7 @@
 
 ## `jmineau` changelog
 
+- 2024-10-31 : Added 'reset_output_wd' option to reset the output directory to the working directory. Previously, the output_wd would be reset whenever 'run_trajec' was True. However, one might want to run multiple simulations with the same output directory. This option allows for that.
 - 2024-10-02 : Restructured output. Simulation configuration information is stored neatly in a json, including receptor information. Trajectory output is now stored as parquet files, which allows languages other than `R` to read them. Additionally added `write_trajec` option to disable trajectory output. Added receptor information to the footprint netcdf attributes, including run_time.
 - 2024-09-14 : Set `lib.loc <- NULL` to allow for auto-selection of the library path and to use site libraries in HPC environments
 
