@@ -236,6 +236,14 @@ simulation_step <- function(before_footprint = list(function() {output}),
       simulation_id_format <- paste0('%Y%m%d%H%M_', r_long, '_', r_lati, '_', 
                                      ifelse(length(r_zagl) > 1, 'X', r_zagl))
       simulation_id <- strftime(r_run_time, simulation_id_format, 'UTC')
+    } else if (is.character(simulation_id) && grepl("{", simulation_id, fixed = TRUE)) {
+      # Smart template replacement for simulation_id
+      sim_id <- simulation_id
+      sim_id <- gsub("{lati}", as.character(r_lati), sim_id, fixed = TRUE)
+      sim_id <- gsub("{long}", as.character(r_long), sim_id, fixed = TRUE)
+      sim_id <- gsub("{zagl}", as.character(r_zagl), sim_id, fixed = TRUE)
+      sim_id <- gsub("{run_time}", strftime(r_run_time, "%Y%m%d%H%M", tz = "UTC"), sim_id, fixed = TRUE)
+      simulation_id <- sim_id
     }
     rundir  <- file.path(output_wd, 'by-id', simulation_id)
     dir.create(rundir, showWarnings = F, recursive = T)
