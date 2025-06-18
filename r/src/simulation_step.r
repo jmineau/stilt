@@ -113,7 +113,6 @@ simulation_step <- function(before_footprint = list(function() {output}),
                             wbbh = 0,
                             wbwf = 0,
                             wbwr = 0,
-                            write_trajec = T,
                             wvert = FALSE,
                             xmn,
                             xmx,
@@ -331,7 +330,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
       }
 
       # Write output to disk
-      trajec_file <- write_output(rundir, simulation_id, output, write_trajec)
+      trajec_file <- write_output(rundir, simulation_id, output)
 
       if (!is.null(trajec_file)) {
         # Symlink trajectory to out/particles
