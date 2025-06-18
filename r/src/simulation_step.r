@@ -334,8 +334,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
 
       if (!is.null(trajec_file)) {
         # Symlink trajectory to out/particles
-        link <- file.path(output_wd, 'particles', basename(trajec_file))
-        suppressWarnings(file.symlink(trajec_file, link))
+        link_files(trajec_file, file.path(output_wd, 'particles'))
       }
     } else {
       # If user opted to recycle existing trajectory files, read in the recycled
