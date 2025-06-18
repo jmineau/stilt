@@ -13,6 +13,7 @@ invisible(lapply(rsc, source))
 if (!'lib.loc' %in% ls()) lib.loc <- NULL
 libs <- load_libs('arrow',
                   'dplyr',
+                  'lubridate',
                   'jsonlite',
                   'ncdf4',
                   'parallel',
