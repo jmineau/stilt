@@ -330,7 +330,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
       }
 
       # Write output to disk
-      trajec_file <- write_output(rundir, simulation_id, output)
+      trajec_file <- write_output(rundir, output)
 
       if (!is.null(trajec_file)) {
         # Symlink trajectory to out/particles
@@ -341,7 +341,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
       # If user opted to recycle existing trajectory files, read in the recycled
       # file to a data frame with an adjusted timestamp and index for the
       # simulation step. If none exists, report an error and proceed
-      output <- read_output(rundir, simulation_id)
+      output <- read_output(rundir)
       if (is.null(output)) {
         warning('simulation_step(): No trajectory file found in ', rundir,
                 '\n  skipping this receptor and trying the next...')

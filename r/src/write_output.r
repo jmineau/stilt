@@ -1,8 +1,8 @@
-#' write_output writes out the output assosciated with each simulation step
+#' write_output writes out the output trajectory and configuration data assosciated with each simulation step
 #' @author James Mineau
 #'
-#' @param rundir The directory to write the output to
-#' @param simulation_id The unique identifier for the simulation
+#' @param rundir The directory to write the output to. This directory should
+#'   contain the simulation ID as its name
 #' @param output A list containing the following keys:
 #'   - receptor: The receptor information: run_time, lati, long, zagl
 #'   - namelist: The HYSPLIT namelist
@@ -17,7 +17,10 @@
 #' @import jsonlite
 #' @export
 
-write_output <- function(rundir, simulation_id, output) {
+write_output <- function(rundir, output) {
+
+  # Get the simulation ID from the rundir
+  simulation_id <- basename(rundir)
 
   # Define output files
   config_file <- file.path(rundir, paste0(simulation_id, '_config.json'))

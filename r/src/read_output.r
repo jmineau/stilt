@@ -1,8 +1,12 @@
 #' read_output reads in the output assosciated with each simulation step
 #' @author James Mineau
 #'
-#' @param rundir The directory to read the output from
-#' @param simulation_id The unique identifier for the simulation
+#' @param rundir The directory to read the output from. This directory should
+#'   contain the simulation ID as its name and should have the following files:
+#'   - `<simulation_id>_config.json`: The configuration file containing receptor,
+#'     namelist, params, and met_files.
+#'   - `<simulation_id>_traj.parquet`: The trajectory data in Parquet format.
+#'   - `<simulation_id>_error.parquet`: The error data in Parquet format (optional).
 #' @return A list containing the following keys:
 #'   - receptor: The receptor information: run_time, lati, long, zagl
 #'   - namelist: The HYSPLIT namelist
@@ -16,7 +20,9 @@
 #' @import jsonlite
 #' @export
 
-read_output <- function(rundir, simulation_id) {
+read_output <- function(rundir) {
+
+  simulation_id <- basename(rundir)
 
   # Define output files
   config_file <- file.path(rundir, paste0(simulation_id, '_config.json'))
