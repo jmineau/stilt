@@ -21,6 +21,7 @@ simulation_step <- function(before_footprint = list(function() {output}),
                             dzf = 0.01,
                             efile = '',
                             emisshrs = 0.01,
+                            foot_id = '',
                             frhmax = 3,
                             frhs = 1,
                             frme = 0.1,
@@ -368,9 +369,9 @@ simulation_step <- function(before_footprint = list(function() {output}),
     
     # Produce footprint --------------------------------------------------------
     # Aggregate the particle trajectory into surface influence footprints. This
-    # outputs a .rds file, which can be read with readRDS() containing the
-    # resultant footprint and various attributes
-    foot_file <- file.path(rundir, paste0(simulation_id, '_foot.nc'))
+    # outputs a netcdf file containing the resultant footprint and various attributes
+    foot_id <- ifelse(foot_id == '', '', paste0('_', foot_id))
+    foot_file <- file.path(rundir, paste0(simulation_id, foot_id, '_foot.nc'))
     foot <- calc_footprint(output$particle, output = foot_file,
                            receptor = output$receptor,
                            projection = projection,

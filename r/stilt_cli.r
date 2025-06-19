@@ -86,6 +86,7 @@ stilt_args <- list(
     dzf = as.numeric(args$dzf),
     efile = as.character(args$efile),
     emisshrs = as.numeric(args$emisshrs),
+    foot_id = as.character(args$foot_id),
     frhmax = as.numeric(args$frhmax),
     frhs = as.numeric(args$frhs),
     frme = as.numeric(args$frme),

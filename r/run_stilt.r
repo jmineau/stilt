@@ -38,7 +38,7 @@ zagl <- 5
 receptors <- expand.grid(run_time = run_times, lati = lati, long = long,
                          zagl = zagl, KEEP.OUT.ATTRS = F, stringsAsFactors = F)
 
-# Footprint grid settings, must set at least xmn, xmx, ymn, ymx below
+# Footprint calculation settings, must set at least xmn, xmx, ymn, ymx below
 hnf_plume <- T
 projection <- '+proj=longlat'
 smooth_factor <- 1
@@ -49,6 +49,7 @@ ymn <- NA
 ymx <- NA
 xres <- 0.01
 yres <- xres
+foot_id <- ''  # An underscore will be prepended
 
 # Meteorological data input
 met_path           <- '<path_to_arl_meteorological_data>'
@@ -199,6 +200,7 @@ stilt_apply(FUN = simulation_step,
             dzf = dzf,
             efile = efile,
             emisshrs = emisshrs,
+            foot_id = foot_id,
             frhmax = frhmax,
             frhs = frhs,
             frme = frme,

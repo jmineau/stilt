@@ -1,11 +1,13 @@
 ## STILT outputs
 
-The model outputs can be found in the directory configured with `output_wd` (defaults to `<stilt_wd>/out/`, see [project structure](http://localhost:3000/#/project-structure)). STILT outputs two files for analysis -
+The model outputs can be found in the directory configured with `output_wd` (defaults to `<stilt_wd>/out/`, see [project structure](http://localhost:3000/#/project-structure)). The following files are produced for each simulation:
 
-- a `<simulation_id>_trajec.parquet` file containing the trajectories of the particle ensemble
-- a `<simulation_id>_foot.nc` file containing gridded footprint values and metadata
+- `<simulation_id>_config.json` — simulation configuration and metadata
+- `<simulation_id>_trajec.parquet` — particle trajectory data
+- `<simulation_id>_error.parquet` — error data (if error parameters are specified)
+- `<simulation_id>_<foot_id>_foot.nc` — gridded footprint values and metadata
 
-Simulation identifiers follow a `yyyymmddHHMM_lati_long_zagl` convention, see [project structure](project-structure.md?id=outby-id).
+By default, simulation identifiers follow a `yyyymmddHHMM_lati_long_zagl` convention, however, this can be customized with the `simulation_id` parameter. Additionally, the `foot_id` parameter can be used to differentiate between multiple footprints generated for the same trajectories. See [project structure](project-structure.md?id=outby-id) for more information.
 
 ## Particle trajectories
 
@@ -52,10 +54,10 @@ particle.head()
 
 ## Gridded footprints
 
-Footprints are packaged and saved in a compressed NetCDF file using [Climate and Forecast (CF)](http://cfconventions.org) compliant metadata with the naming convention `<simulation_id>_foot.nc`. This object contains information about the model domain, the grid resolution, and footprint values. This object is typically a three dimensional array with dimensions ordered (_x_, _y_, _t_). However, the object will only have dimensions (_x_, _y_) for time integrated footprints.
+Footprints are packaged and saved in a compressed NetCDF file using [Climate and Forecast (CF)](http://cfconventions.org) compliant metadata with the naming convention `<simulation_id>_<foot_id>_foot.nc`. This object contains information about the model domain, the grid resolution, and footprint values. This object is typically a three dimensional array with dimensions ordered (_x_, _y_, _t_). However, the object will only have dimensions (_x_, _y_) for time integrated footprints.
 
 ```bash
-ncdump -h <simulation_id>_foot.nc
+ncdump -h <simulation_id>_<foot_id>_foot.nc
 
 netcdf <simulation_id>_foot {
 dimensions:
@@ -106,14 +108,14 @@ Using the [Raster R package](https://geoscripting-wur.github.io/IntroToRaster/) 
 
 ```r
 library(raster)
-footprint <- brick('<simulation_id>_foot.nc')
+footprint <- brick('<simulation_id>_<foot_id>_foot.nc')
 footprint
 # class       : RasterBrick
 # dimensions  : 710, 1320, 937200, 6  (nrow, ncol, ncell, nlayers)
 # resolution  : 0.01, 0.01  (x, y)
 # extent      : -84.3, -71.1, 39.6, 46.7  (xmin, xmax, ymin, ymax)
 # coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
-# data source : <stilt_wd>/out/by-id/<simulation_id>/<simulation_id>_foot.nc
+# data source : <stilt_wd>/out/by-id/<simulation_id>/<simulation_id>_<foot_id>_foot.nc
 # names       : X432745200, X432748800, X432752400, X432756000, X432759600, X432763200
 # z-value     : 432745200, 432748800, 432752400, 432756000, 432759600, 432763200
 # varname     : foot
@@ -129,9 +131,9 @@ Alternatively the footprint data can be loaded using standard NetCDF methods.
 
 ```r
 library(ncdf4)
-nc <- nc_open('<simulation_id>_foot.nc')
+nc <- nc_open('<simulation_id>_<foot_id>_foot.nc')
 nc
-# File <simulation_id>_foot.nc (NC_FORMAT_NETCDF4):
+# File <simulation_id>_<foot_id>_foot.nc (NC_FORMAT_NETCDF4):
 #
 #      1 variables (excluding dimension variables):
 #         float foot[lon,lat,time]   (Contiguous storage)
