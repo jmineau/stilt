@@ -5,7 +5,7 @@
 #'   contain the simulation ID as its name and should have the following files:
 #'   - `<simulation_id>_config.json`: The configuration file containing receptor,
 #'     namelist, params, and met_files.
-#'   - `<simulation_id>_traj.parquet`: The trajectory data in Parquet format.
+#'   - `<simulation_id>_trajec.parquet`: The trajectory data in Parquet format.
 #'   - `<simulation_id>_error.parquet`: The error data in Parquet format (optional).
 #' @return A list containing the following keys:
 #'   - receptor: The receptor information: run_time, lati, long, zagl
@@ -26,11 +26,11 @@ read_output <- function(rundir) {
 
   # Define output files
   config_file <- file.path(rundir, paste0(simulation_id, '_config.json'))
-  traj_file <- file.path(rundir, paste0(simulation_id, '_traj.parquet'))
+  trajec_file <- file.path(rundir, paste0(simulation_id, '_trajec.parquet'))
   error_file <- file.path(rundir, paste0(simulation_id, '_error.parquet'))
 
   # If trajectory file does not exist, return NULL
-  if (!file.exists(traj_file)) {
+  if (!file.exists(trajec_file)) {
     return(NULL)
   }
 
@@ -38,7 +38,7 @@ read_output <- function(rundir) {
   config <- read_json(config_file)
 
   # Read trajectory parquet file
-  particle <- read_parquet(traj_file)
+  particle <- read_parquet(trajec_file)
 
   # Initialize output list
   output <- list(

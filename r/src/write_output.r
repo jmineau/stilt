@@ -24,11 +24,11 @@ write_output <- function(rundir, output) {
 
   # Define output files
   config_file <- file.path(rundir, paste0(simulation_id, '_config.json'))
-  traj_file <- file.path(rundir, paste0(simulation_id, '_traj.parquet'))
+  trajec_file <- file.path(rundir, paste0(simulation_id, '_trajec.parquet'))
   error_file <- file.path(rundir, paste0(simulation_id, '_error.parquet'))
 
   # Remove existing output files if they exist
-  for (file in c(config_file, traj_file, error_file)) {
+  for (file in c(config_file, trajec_file, error_file)) {
     if (file.exists(file))
       system(paste('rm', file))
   }
@@ -52,7 +52,7 @@ write_output <- function(rundir, output) {
   write_json(config, config_file, pretty=T, auto_unbox=T, digits=NA)
 
   # Always write trajectory to parquet
-  write_parquet(output$particle, traj_file)
+  write_parquet(output$particle, trajec_file)
 
-  return(traj_file)
+  return(trajec_file)
 }
