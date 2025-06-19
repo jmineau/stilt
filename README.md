@@ -26,7 +26,7 @@
 
 ## `jmineau` changelog
 
--2025-06-19 : Added `foot_id` option. This allows for users to specify an optional identifier for the footprint output files. This can be useful for distinguishing between different footprints generated using the same trajectory data (eg. different grid resolutions). The footprint files will now be named `<simulation_id>_<foot_id>_foot.nc`, where `foot_id` is the specified identifier.
+- 2025-06-19 : Added `foot_id` option. This allows for users to specify an optional identifier for the footprint output files. This can be useful for distinguishing between different footprints generated using the same trajectory data (eg. different grid resolutions). The footprint files will now be named `<simulation_id>_<foot_id>_foot.nc`, where `foot_id` is the specified identifier.
 - 2025-06-19 : Replaced 'traj' with 'trajec' in all instances to be more clear and consistent with the full word 'trajectory'. This change improves clarity in the codebase and aligns with the terminology used in the documentation.
 - 2025-06-18 : Added support for smart `simulation_id` templates. Users can now specify a template string with curly-brace placeholders (e.g., `myrun_{lati}_{long}_{zagl}_{run_time}`) that will be filled in with the actual values for each simulation.
 - 2025-06-18 : Removed `simulation_id` from `write_output` and `read_output` parameters. It is assumed that the simulation ID is always the same as the `rundir` name. As the rundir is within the 'by-id' directory.
