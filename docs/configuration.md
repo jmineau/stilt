@@ -84,9 +84,9 @@ str(receptors)
 | `run_trajec`    | Logical indicating whether to produce new trajectories with `hycs_std`. If FALSE, will try to load the previous trajectory outputs. This is often useful for regridding purposes                                                                                                |
 | `simulation_id` | Optional string or template for simulation naming. If `NA` (default), a unique ID is generated based on time and receptor location. If a string with curly-brace placeholders (e.g., `myrun_{lati}_{long}_{zagl}_{run_time}`), these will be replaced with the actual values for each simulation. Supported placeholders: `{lati}`, `{long}`, `{zagl}`, `{run_time}` (formatted as `%Y%m%d%H%M`). |
 | `timeout`       | number of seconds to allow `hycs_std` to complete before sending SIGTERM and moving to the next simulation; defaults to 3600 (1 hour)                                                                                                                                           |
-| `varsiwant`     | character vector of 4-letter `hycs_std` variables. Defaults to the minimum required variables including `'time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens', 'samt', 'sigw', 'tlgr'`. Can optionally include options listed below.                                  |
+| `varsiwant`     | character vector of 4-letter `hycs_std` variables. Defaults to the minimum required variables including `'time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'pres', 'dens', 'samt', 'sigw', 'tlgr'`. Can optionally include options listed below.                                  |
 
-#### Optional `varsiwant` arguments
+#### Available `varsiwant` arguments
 
 - `crai` convective rainfall rate [m/min]
 - `dens` air density [kg/m3]
@@ -97,22 +97,24 @@ str(receptors)
 - `indx` unique particle identifier
 - `lati` latitude position of particle [degrees]
 - `lcld` low cloud cover [%]
-- `lhtf` latent heat flux [W/m2]
 - `long` longitude position of particle [degrees]
 - `mlht` mixed-layer height [m]
+- `pres` pressure at particle's vertical position [hPa]
 - `rain` total rainfall rate [m/min]
 - `rhfr` relative humidity fraction [0~1.0]
 - `samt` amount of time particle spends below VEGHT (see section on SETUP.CFG) [min]
 - `shtf` sensible heat flux [W/m2]
 - `sigw` standard deviation of vertical velocity; measure of strength of vertical turbulence [m/s]
-- `solw` soil moisture
 - `sphu` specific humidity [g/g]
 - `tcld` total cloud cover [%]
 - `temp` air temperature at lowest model layer [K]
+- `temz` temperature at particle's vertical position [K]
 - `time` time since start of simulation; negative if going backward in time [min] indx particle index
 - `tlgr` Lagrangian decorrelation timescale [s]
+- `whtf` latent heat flux [W/m2]
 - `wout` vertical mean wind [m/s]
 - `zagl` vertical position of particle [m above ground level]
+- `zfx1` vertical displacement due to convective flux [m]
 - `zloc` limit of convection heights [m]
 - `zsfc` terrain height [m above sea level]
 

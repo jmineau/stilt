@@ -68,8 +68,8 @@ run_foot        <- T
 run_trajec      <- T
 simulation_id   <- NA
 timeout         <- 3600
-varsiwant       <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'dens',
-                   'samt', 'sigw', 'tlgr')
+varsiwant       <- c('time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'pres',
+                     'dens', 'samt', 'sigw', 'tlgr')
 
 # Transport and dispersion settings
 capemin     <- -1
