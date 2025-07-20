@@ -246,6 +246,11 @@ simulation_step <- function(before_footprint = list(function() {output}),
       sim_id <- gsub("{run_time}", strftime(r_run_time, "%Y%m%d%H%M", tz = "UTC"), sim_id, fixed = TRUE)
       simulation_id <- sim_id
     }
+    if (grepl(.Platform$file.sep, simulation_id, fixed = TRUE)) {
+      warning('simulation_id must not contain path separators')
+      return()
+    }
+
     rundir  <- file.path(output_wd, 'by-id', simulation_id)
     dir.create(rundir, showWarnings = F, recursive = T)
     dir.create(file.path(output_wd, 'particles'), showWarnings = F, recursive = T)
