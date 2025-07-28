@@ -3,10 +3,10 @@ name: Build + Test
 on:
   push:
     branches:
-      - main
+      - jmineau
   pull_request:
     branches:
-      - main
+      - jmineau
 
 env:
   R_LIBS_USER: .Rpackages
