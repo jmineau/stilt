@@ -65,6 +65,27 @@ Rscript r/run_stilt.r
 
 Get in touch to discuss cloud native options for managing large distributed workloads, error handling with fault tolerance for low cost preemptible node pools, cluster and worker autoscaling, logging, and storage.
 
+### Command Line Interface
+
+Simulations can be run via the command line interface (CLI) using the `stilt_cli.r` script. This script provides a convenient way to run STILT simulations without needing to write R code directly. CLI arguments are passed directly to `simulation_step()`. This method bypasses the `config.yaml` and `receptors.csv` files, allowing for quick and flexible simulation runs.
+
+```bash
+r/stilt_cli.r \
+  r_time=2015-12-10T00:00:00Z \
+  r_lati=40.5 \
+  r_long=-112.0 \
+  r_zagl=5 \
+  met_path=$(pwd)/stilt-tutorials/01-wbb/met \
+  met_file_format=%Y%m%d.%Hz.hrrra \
+  n_hours=-12 \
+  xmn=-113 \
+  xmx=-111 \
+  xres=0.01 \
+  ymn=39.5 \
+  ymx=41.5 \
+  yres=0.01
+```
+
 ---
 
 ## Next steps

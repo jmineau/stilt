@@ -17,8 +17,7 @@
 #'   .nc files are saved in the CF-1.4 (Climate and Forcast Metadata) convention
 #'   for native use with raster::brick() and raster::raster(). rds files do not
 #'   require any additional libraries and have better compression
-#' @param receptor receptor information: run_time, lati, long, zagl. run_time
-#'   must be a POSIXct object. Can be NULL resulting in NULL timestamp outputs
+#' @param receptor receptor information: time, lati, long, zagl
 #' @param projection proj4 string defining the map projection of the footprint
 #'   netCDF output
 #' @param time_integrate logical indicating whether to integrate footprint over
@@ -253,9 +252,9 @@ calc_footprint <- function(p, output = NULL, receptor,
   
   # Determine time to use in output files
   if (time_integrate) {
-    time_out <- as.numeric(receptor$run_time) 
+    time_out <- as.numeric(receptor$time) 
   } else {
-    time_out <- as.numeric(receptor$run_time + layers * interval)
+    time_out <- as.numeric(receptor$time + layers * interval)
   }
   
   # Set footprint metadata and write to file

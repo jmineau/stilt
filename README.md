@@ -25,7 +25,18 @@
 </p>
 
 ## `jmineau` changelog
-
+- 2025-07-26 : Major changes to the input configuration system.
+  - The configuration file is now a YAML file named `config.yaml` located in the working directory. This file contains all the necessary parameters for running STILT simulations, including model settings, receptor information, and trajectory options.
+  - A corresponding simulation config yaml file is generated in each simulation directory, which includes all the parameters used for that specific simulation. This ensures reproducibility and allows users to easily review or share their simulation settings. We no longer write a `config.json` file. As long as the input parameters are valid, the config yaml file is written first and can be used to identify simulation directories.
+  - receptors are now specified in a csv file. A helper function is provided to generate a csv for a grid of receptors. The inclusion of a `group` column allows for grouping of receptors, which means Column/MultiPoint receptors can now be passed to slurm
+  - Created a custom receptor object that is aware of the kind of receptor it is (e.g., Point, Column, MultiPoint, etc.).
+  - Updated calculation of `xhgt` (original receptor height) to be correct for MultiPoint receptors. Still needs to be updated for mixed & multi-column receptors.
+  - Simulation IDs for non Point/Column receptors that are NA are not set based on a md5 hash of the receptor locations. Not human-readable, but unique. Probably recommended that users specify their own simulation ID for these cases. Smart ID templates have been removed due to the complexity of non-Point receptors.
+  - Removed `before_trajec`. There is essentially nothing to be manipulated before the trajectory is run that could not be set in the configuration file.
+  - `nbptyp` was missing from the `run_stilt.r` file. It is now included in the configuration file and passed to the model.
+  - Removed `validate_footprint_extent.r` as stilt can be run without outputting a footprint. The grid extent is only needed if a footprint is generated or if meteorology subgrids are enabled.
+  - rundir has been renamed to simulation_dir to reduce confusion. Simularily, the run_time has been renamed to receptor_time (r_time) or simply time.
+  - Changed default `numpar` to 1000. This is a common values for many applications and should be sufficient for most users. Users can still override this value in the configuration file
 - 2025-06-23 : Updated `varsiwant` to match current hysplit document. Additionally, included `pres` as a default `varsiwant` variable. This change ensures that the pressure variable is always included in the trajectory output, which is important for many atmospheric modeling applications.
 - 2025-06-19 : Added `foot_id` option. This allows for users to specify an optional identifier for the footprint output files. This can be useful for distinguishing between different footprints generated using the same trajectory data (eg. different grid resolutions). The footprint files will now be named `<simulation_id>_<foot_id>_foot.nc`, where `foot_id` is the specified identifier.
 - 2025-06-19 : Replaced 'traj' with 'trajec' in all instances to be more clear and consistent with the full word 'trajectory'. This change improves clarity in the codebase and aligns with the terminology used in the documentation.

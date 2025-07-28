@@ -8,7 +8,7 @@
 #'   .nc files are saved in the CF-1.4 (Climate and Forcast Metadata) convention
 #'   for native use with raster::brick() and raster::raster(). rds files do not
 #'   require any additional libraries and have better compression
-#' @param receptor receptor information: run_time, lati, long, zagl.
+#' @param receptor receptor information: time, lati, long, zagl.
 #' @param glong longitude array corresponding to first dimension of foot
 #' @param glati latitude array corresponding to second dimension of foot
 #' @param projection proj4 string defining the map projection of the footprint
@@ -128,7 +128,7 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
     ncatt_put(nc, 0, 'documentation', 'github.com/uataq/stilt')
     ncatt_put(nc, 0, 'title', 'STILT Footprint')
     ncatt_put(nc, 0, 'time_created', format(Sys.time(), tz = 'UTC'))
-    ncatt_put(nc, 0, 'r_run_time', format(receptor$run_time))
+    ncatt_put(nc, 0, 'r_time', format(receptor$time))
     ncatt_put(nc, 0, 'r_lati', receptor$lati)
     ncatt_put(nc, 0, 'r_long', receptor$long)
     ncatt_put(nc, 0, 'r_zagl', receptor$zagl)

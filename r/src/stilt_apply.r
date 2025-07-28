@@ -37,7 +37,7 @@ stilt_apply <- function(FUN, slurm = F, slurm_options = list(),
 
   message('Initializing STILT')
   message('Commit ID: ', find_git_commit_id())
-  message('Number of receptors: ', nrow(Y))
+  message('Number of simulations: ', nrow(Y))
   message('Number of parallel workers: ', n_nodes * n_cores)
 
   if (slurm) {

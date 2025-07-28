@@ -1,0 +1,127 @@
+---
+title: STILT Configuration
+description: Configuration file for STILT simulations
+documentation: https://jmineau.github.io/stilt
+repository: https://github.com/jmineau/stilt
+
+model:
+  n_hours: -24
+  numpar: 1000
+  rm_dat: true
+  run_foot: true
+  run_trajec: true
+  simulation_id: null
+  timeout: 3600
+  varsiwant: [time, indx, long, lati, zagl, foot, mlht, pres, dens, samt, sigw, tlgr]
+
+receptors: 'in/receptors.csv'  # path to receptor CSV file
+
+footprint:
+  hnf_plume: true
+  projection: '+proj=longlat'
+  smooth_factor: 1
+  time_integrate: false
+  xmn: null  # footprint grid must be specified if run_foot is true
+  xmx: null
+  xres: null
+  ymn: null
+  ymx: null
+  yres: null
+  foot_id: ''
+
+met:
+  met_path: '<path_to_arl_meteorological_data>'
+  met_file_format: '%Y%m%d.%Hz.hrrra'
+  met_file_tres: '6 hours'
+  met_subgrid_buffer: 0.2
+  met_subgrid_enable: false
+  met_subgrid_levels: null
+  n_met_min: 1
+
+transport:
+  capemin: -1
+  cmass: 0
+  conage: 48
+  cpack: 1
+  delt: 1
+  dxf: 1
+  dyf: 1
+  dzf: 0.01
+  efile: ''
+  emisshrs: 0.01
+  frhmax: 3
+  frhs: 1
+  frme: 0.1
+  frmr: 0
+  frts: 0.1
+  frvs: 0.01
+  hscale: 10800
+  ichem: 8
+  idsp: 2
+  initd: 0
+  k10m: 1
+  kagl: 1
+  kbls: 1
+  kblt: 5
+  kdef: 0
+  khinp: 0
+  khmax: 9999
+  kmix0: 150
+  kmixd: 3
+  kmsl: 0
+  kpuff: 0
+  krand: 4
+  krnd: 6
+  kspl: 1
+  kwet: 1
+  kzmix: 0
+  maxdim: 1
+  maxpar: null
+  mgmin: 10
+  mhrs: 9999
+  nbptyp: 1
+  ncycl: 0
+  ndump: 0
+  ninit: 1
+  nstr: 0
+  nturb: 0
+  nver: 0
+  outdt: 0
+  p10f: 1
+  pinbc: ''
+  pinpf: ''
+  poutf: ''
+  qcycle: 0
+  rhb: 80
+  rht: 60
+  splitf: 1
+  tkerd: 0.18
+  tkern: 0.18
+  tlfrac: 0.1
+  tout: 0
+  tratio: 0.75
+  tvmix: 1
+  veght: 0.5
+  vscale: 200
+  vscaleu: 200
+  vscales: -1
+  w_option: 0
+  wbbh: 0
+  wbwf: 0
+  wbwr: 0
+  wvert: false
+  z_top: 25000
+  zicontroltf: 0
+  ziscale: 0
+
+error:
+  siguverr: null
+  tluverr: null
+  zcoruverr: null
+  horcoruverr: null
+  sigzierr: null
+  tluzerr: null
+  horcorzierr: null
+
+user_funcs:
+  before_footprint: null

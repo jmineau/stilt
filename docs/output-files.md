@@ -2,12 +2,27 @@
 
 The model outputs can be found in the directory configured with `output_wd` (defaults to `<stilt_wd>/out/`, see [project structure](http://localhost:3000/#/project-structure)). The following files are produced for each simulation:
 
-- `<simulation_id>_config.json` — simulation configuration and metadata
+- `<simulation_id>_config.yaml` — simulation configuration and metadata
 - `<simulation_id>_trajec.parquet` — particle trajectory data
 - `<simulation_id>_error.parquet` — error data (if error parameters are specified)
 - `<simulation_id>_<foot_id>_foot.nc` — gridded footprint values and metadata
 
-By default, simulation identifiers follow a `yyyymmddHHMM_lati_long_zagl` convention, however, this can be customized with the `simulation_id` parameter. Additionally, the `foot_id` parameter can be used to differentiate between multiple footprints generated for the same trajectories. See [project structure](project-structure.md?id=outby-id) for more information.
+
+### Simulation identifiers
+
+The simulation identifier (`simulation_id`) is used to uniquely name output files and directories for each simulation. The way this ID is generated depends on the kind of receptor provided:
+
+- **Point or Column receptors:**
+  - By default, the simulation ID is generated using the format: `yyyymmddHHMM_long_lati_zagl`, where:
+	- `yyyymmddHHMM` is the UTC time of the receptor,
+	- `long` and `lati` are the longitude and latitude,
+	- `zagl` is the receptor height above ground level (if a single value; if multiple, uses `X`).
+- **Other receptor types (e.g., MultiPoint):**
+  - The simulation ID is generated using a hash (MD5) of the receptor locations, resulting in a unique but non human-readable string: `yyyymmddHHMM_multi_<hash>`, where `<hash>` is a digest of the receptor locations dataframe.
+
+You can always override the default by specifying the `simulation_id` parameter directly in your configuration. This is encouraged for MultiPoint simulations. Additionally, the optional `foot_id` parameter can be used to distinguish between multiple footprints generated from the same trajectory data (e.g., for different grid resolutions).
+
+See [project structure](project-structure.md?id=outby-id) for more information.
 
 ## Particle trajectories
 

@@ -3,11 +3,16 @@
 STILT has been compiled to run on UNIX platforms (Mac, Linux). Required software includes
 
 - [R (version >= 3.5.0)](https://www.r-project.org/)
+  - `arrow` package for reading/writing parquet files
+  - `digest` package for hashing receptor locations
   - `dplyr` package for data manipulation
+  - `lubridate` package for date/time manipulation
+  - `ncdf4` package for reading/writing NetCDF files
   - `parallel` package for single node parallelism
-  - `rslurm` package for multi node parallelism
   - `raster` package for gridded spatial analysis tools
-  - `uataq` package for STILT project initiation workflow
+  - `rslurm` package for multi node parallelism
+  - `R.utils` package for determining relative paths
+  - `yaml` package for reading/writing YAML files
 - [Git](https://git-scm.com/) for fetching STILT source code from GitHub
 - [NetCDF (version >= 4.0)](https://www.unidata.ucar.edu/software/netcdf/) for storage libraries
 - [GDAL](https://gdal.org) for geospatial transformations
@@ -16,19 +21,15 @@ STILT has been compiled to run on UNIX platforms (Mac, Linux). Required software
 
 STILT is freely available and we encourage others to use it. Kindly keep us informed of how you are using the model and of any publication plans. Please acknowledge the source as a citation. STILT is continuously updated and improved by the development consortium, and in some cases (as when new elements are used for the first time) we may suggest that one or more of the developers be offered participation as authors. If your work directly competes with our analysis that uses unpublished features, we may ask that we have the opportunity to submit a manuscript first. The software is updated from time to time and it is your responsibility to ensure that your publication is consistent with the most recent version.
 
-## Installing with R
+## Installing with Python or R
 
-The preferred method uses R to initialize a new project and requires the `uataq` R package, which is open source and can be installed using `devtools`.
+A STILT project can be initialized via the `lair` python package. A project name other than `stilt` should be chosen for projects to avoid naming conflicts with the repository.
+> `lair` documentation can be found at [https://jamesmineau.chpc.utah.edu/lair/](https://jamesmineau.chpc.utah.edu/lair/)
 
-```r
-if (!require('devtools')) install.packages('devtools')
-devtools::install_github('uataq/uataq')
-```
+```python
+from lair.air.stilt import stilt_init
 
-A STILT project can then be initialized in plain R code. A project name other than `stilt` should be chosen for projects to avoid naming conflicts with the repository.
-
-```r
-uataq::stilt_init('myproject')
+stilt_init('myproject')
 # Cloning into 'myproject'...
 # remote: Enumerating objects: 60, done.
 # remote: Counting objects: 100% (60/60), done.
@@ -44,7 +45,19 @@ uataq::stilt_init('myproject')
 # to be notified if important STILT model updates updates.
 ```
 
-This method sources statically compiled `hycs_std`, `xtrct_grid`, `xtrct_time`, and `arw2arl` binaries for 64-bit Intel and AMD systems. These binaries provide the same functionality as those compiled from source but their use with forecast data to model future scenarios has been disabled.
+The R version of the above command is similar, but requires the `uataq` R package, which is open source and can be installed using `devtools`.
+
+```r
+if (!require('devtools')) install.packages('devtools')
+devtools::install_github('uataq/uataq')
+
+uataq::stilt_init('myproject', branch = 'jmineau',
+                  repo = 'https://github.com/jmineau/stilt')
+# Cloning into 'myproject'...
+# ...
+```
+
+These methods source statically compiled `hycs_std`, `xtrct_grid`, `xtrct_time`, and `arw2arl` binaries for 64-bit Intel and AMD systems. These binaries provide the same functionality as those compiled from source but their use with forecast data to model future scenarios has been disabled.
 
 ## Installing from source
 

@@ -4,10 +4,7 @@
 #' CONTROL file contains input data for the model, including receptor x,y,z,t
 #' coordinates as well as meteorological data files to drive simulations.
 #'
-#' @param receptor data frame containing columns for \code{run_times} as a
-#'   POSIXct formatted timestamp, \code{lati} (degrees), \code{long} (degrees),
-#'   and \code{zagl} (meters above ground level) as numeric specifications of
-#'   the receptor location
+#' @param receptor receptor object containing receptor time and locations
 #' @param emisshrs duration of time to release particles over at the start of
 #'   simulation, in hours; defaults to 0.01
 #' @param n_hour number of hours to run each simulation; negative indicates
@@ -27,18 +24,12 @@ write_control <- function(receptor, emisshrs, n_hour, w_option = 0,
   if (!'CONTROL' %in% basename(file))
     stop('write_control(): file argument must end with CONTROL')
 
-  receptor <- with(receptor, 
-                   data.frame(run_time,
-                              lati=unlist(lati),
-                              long=unlist(long),
-                              zagl = unlist(zagl), 
-                              stringsAsFactors = F))
-  receptor$print <- with(receptor, paste(lati, long, zagl))
+  locations <- receptor$locations
 
   txt <- c(
-    strftime(receptor$run_time[1], tz = 'UTC', format = '%y %m %d %H %M'),
-    nrow(receptor),
-    receptor$print,
+    strftime(receptor$time, tz = 'UTC', format = '%y %m %d %H %M'),
+    nrow(locations),
+    with(locations, paste(lati, long, zagl)),
     n_hour,
     w_option,
     format(z_top, nsmall = 1),

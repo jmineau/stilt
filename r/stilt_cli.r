@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 # STILT R CLI for single-shot batch proccessing
-# For documentation, see https://uataq.github.io/stilt/
+# For documentation, see https://jmineau.github.io/stilt/
 # Ben Fasoli
 # 
 # git clone https://github.com/uataq/stilt-tutorials /tmp/stilt-tutorials
 # r/run_stilt_cli.r \
-#     r_run_time=2015-12-10T00:00:00Z \
+#     r_time=2015-12-10T00:00:00Z \
 #     r_lati=40.5 \
 #     r_long=-112.0 \
 #     r_zagl=5 \
@@ -29,8 +29,8 @@ for (arg in strsplit(arg_strings, '=', fixed = T)) {
 }
 
 # Validate required arguments exist
-req_args <- c('met_file_format', 'met_path', 'r_run_time', 'r_lati', 'r_long',
-              'r_zagl', 'xmn', 'xmx', 'xres', 'ymn', 'ymx', 'yres')
+req_args <- c('met_file_format', 'met_path', 'r_time', 'r_lati', 'r_long',
+              'r_zagl')
 if (!all(req_args %in% names(args))) {
     stop(paste('Not all arguments supplied:', 
                paste(req_args, collapse=',')))
@@ -71,31 +71,64 @@ if (grepl(',', args$r_zagl, fixed=T)) {
     r_zagl <- as.numeric(args$r_zagl)
 }
 
-if ((length(r_lati) > 1) && (length(r_long) > 1) && (is.na(args$simulation_id))) {
-    stop('Must specify simulation_id for slant column releases.')
-}
-
 # Set argument types
 stilt_args <- list(
-    capemin <- as.numeric(args$capemin),
-    cmass <- as.numeric(args$cmass),
+    # System configuration
+    stilt_wd = as.character(args$stilt_wd),
+    output_wd = as.character(args$output_wd),
+    lib.loc = as.character(args$lib.loc),
+    # Receptor placement
+    r_time = as.POSIXct(args$r_time, tz = 'UTC',
+                        format = '%Y-%m-%dT%H:%M:%S'),
+    r_lati = r_lati,
+    r_long = r_long,
+    r_zagl = r_zagl,
+    # Footprint calculation methods
+    hnf_plume = as.logical(args$hnf_plume),
+    projection = as.character(args$projection),
+    smooth_factor = as.numeric(args$smooth_factor),
+    time_integrate = as.logical(args$time_integrate),
+    xmn = as.numeric(args$xmn),
+    xmx = as.numeric(args$xmx),
+    xres = as.numeric(args$xres),
+    ymn = as.numeric(args$ymn),
+    ymx = as.numeric(args$ymx),
+    yres = as.numeric(args$yres),
+    foot_id = as.character(args$foot_id),
+    # Meteorological data input
+    met_path = as.character(args$met_path),
+    met_file_format = as.character(args$met_file_format),
+    met_file_tres = as.character(args$met_file_tres),
+    met_subgrid_buffer = as.numeric(args$met_subgrid_buffer),
+    met_subgrid_enable = as.logical(args$met_subgrid_enable),
+    met_subgrid_levels = as.numeric(args$met_subgrid_levels),
+    n_met_min = as.numeric(args$n_met_min),
+    # Model control
+    n_hours = as.numeric(args$n_hours),
+    numpar = as.numeric(args$numpar),
+    rm_dat = as.logical(args$rm_dat),
+    run_foot = as.logical(args$run_foot),
+    run_trajec = as.logical(args$run_trajec),
+    simulation_id = as.character(args$simulation_id),
+    varsiwant = as.character(args$varsiwant),
+    timeout = as.numeric(args$timeout),
+    # Transport and dispersion
+    capemin = as.numeric(args$capemin),
+    cmass = as.numeric(args$cmass),
     conage = as.numeric(args$conage),
     cpack = as.numeric(args$cpack),
+    delt = as.numeric(args$delt),
     dxf = as.numeric(args$dxf),
     dyf = as.numeric(args$dyf),
     dzf = as.numeric(args$dzf),
     efile = as.character(args$efile),
     emisshrs = as.numeric(args$emisshrs),
-    foot_id = as.character(args$foot_id),
     frhmax = as.numeric(args$frhmax),
     frhs = as.numeric(args$frhs),
     frme = as.numeric(args$frme),
     frmr = as.numeric(args$frmr),
     frts = as.numeric(args$frts),
     frvs = as.numeric(args$frvs),
-    hnf_plume = as.logical(args$hnf_plume),
-    horcoruverr = as.numeric(args$horcoruverr),
-    horcorzierr = as.numeric(args$horcorzierr),
     hscale = as.numeric(args$hscale),
     ichem = as.numeric(args$ichem),
     idsp = as.numeric(args$idsp),
@@ -116,63 +149,32 @@ stilt_args <- list(
     kspl = as.numeric(args$kspl),
     kwet = as.numeric(args$kwet),
     kzmix = as.numeric(args$kzmix),
-    lib.loc = as.character(args$lib.loc),
     maxdim = as.numeric(args$maxdim),
     maxpar = as.numeric(args$maxpar),
-    met_file_format = as.character(args$met_file_format),
-    met_file_tres = as.character(args$met_file_tres),
-    met_path = as.character(args$met_path),
-    met_subgrid_buffer = as.numeric(args$met_subgrid_buffer),
-    met_subgrid_enable = as.logical(args$met_subgrid_enable),
-    met_subgrid_levels = as.numeric(args$met_subgrid_levels),
     mgmin = as.numeric(args$mgmin),
-    n_hours = as.numeric(args$n_hours),
-    n_met_min = as.numeric(args$n_met_min),
+    mhrs = as.numeric(args$mhrs),
+    nbptyp = as.numeric(args$nbptyp),
     ncycl = as.numeric(args$ncycl),
     ndump = as.numeric(args$ndump),
     ninit = as.numeric(args$ninit),
     nstr = as.numeric(args$nstr),
     nturb = as.numeric(args$nturb),
-    numpar = as.numeric(args$numpar),
     nver = as.numeric(args$nver),
     outdt = as.numeric(args$outdt),
-    outfrac = as.numeric(args$outfrac),
-    output_wd = as.character(args$output_wd),
     p10f = as.numeric(args$p10f),
     pinbc = as.character(args$pinbc),
     pinpf = as.character(args$pinpf),
     poutf = as.character(args$poutf),
-    projection = as.character(args$projection),
     qcycle = as.numeric(args$qcycle),
-    r_run_time = as.POSIXct(args$r_run_time,
-                            tz = 'UTC',
-                            format = '%Y-%m-%dT%H:%M:%S'),
-    r_lati = r_lati,
-    r_long = r_long,
-    r_zagl = r_zagl,
-    random = as.numeric(args$random),
     rhb = as.numeric(args$rhb),
     rht = as.numeric(args$rht),
-    rm_dat = as.logical(args$rm_dat),
-    run_foot = as.logical(args$run_foot),
-    run_trajec = as.logical(args$run_trajec),
-    siguverr = as.numeric(args$siguverr),
-    sigzierr = as.numeric(args$sigzierr),
-    simulation_id = as.character(args$simulation_id),
-    smooth_factor = as.numeric(args$smooth_factor),
     splitf = as.numeric(args$splitf),
-    stilt_wd = as.character(args$stilt_wd),
-    time_integrate = as.logical(args$time_integrate),
-    timeout = as.numeric(args$timeout),
     tkerd = as.numeric(args$tkerd),
     tkern = as.numeric(args$tkern),
     tlfrac = as.numeric(args$tlfrac),
-    tluverr = as.numeric(args$tluverr),
-    tlzierr = as.numeric(args$tlzierr),
     tout = as.numeric(args$tout),
     tratio = as.numeric(args$tratio),
     tvmix = as.numeric(args$tvmix),
-    varsiwant = as.character(args$varsiwant),
     veght = as.numeric(args$veght),
     vscale = as.numeric(args$vscale),
     vscaleu = as.numeric(args$vscaleu),
@@ -182,16 +184,19 @@ stilt_args <- list(
     wbwf = as.numeric(args$wbwf),
     wbwr = as.numeric(args$wbwr),
     wvert = as.logical(args$wvert),
-    xmn = as.numeric(args$xmn),
-    xmx = as.numeric(args$xmx),
-    xres = as.numeric(args$xres),
-    ymn = as.numeric(args$ymn),
-    ymx = as.numeric(args$ymx),
-    yres = as.numeric(args$yres),
+    z_top = as.numeric(args$z_top),
     zicontroltf = as.numeric(args$zicontroltf),
     ziscale = as.numeric(args$ziscale),
-    z_top = as.numeric(args$z_top),
-    zcoruverr = as.numeric(args$zcoruverr)
+    # Transport error calculations
+    horcoruverr = as.numeric(args$horcoruverr),
+    horcorzierr = as.numeric(args$horcorzierr),
+    zcoruverr = as.numeric(args$zcoruverr),
+    siguverr = as.numeric(args$siguverr),
+    sigzierr = as.numeric(args$sigzierr),
+    tluverr = as.numeric(args$tluverr),
+    tlzierr = as.numeric(args$tlzierr),
+    # User defined functions
+    before_footprint = as.character(args$before_footprint),
 )
 stilt_args <- stilt_args[sapply(stilt_args, function(x) length(x) > 0)]
 source(file.path(stilt_args$stilt_wd, 'r', 'src', 'simulation_step.r'))

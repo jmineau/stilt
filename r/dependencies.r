@@ -12,14 +12,15 @@ invisible(lapply(rsc, source))
 # Load external libraries
 if (!'lib.loc' %in% ls()) lib.loc <- NULL
 libs <- load_libs('arrow',
+                  'digest',
                   'dplyr',
                   'lubridate',
-                  'jsonlite',
                   'ncdf4',
                   'parallel',
                   'raster',
                   'rslurm',
                   'R.utils',
+                  'yaml',
                   lib.loc = lib.loc)
 
 # Load permute fortran dll for footprint matrix permutation
@@ -33,8 +34,6 @@ if ((!class(projection) == 'function') && ('projection' %in% ls()))
   validate_projection(projection)
 if ('varsiwant' %in% ls())
   validate_varsiwant(varsiwant)
-if (all(c('xmn', 'xmx', 'ymn', 'ymx') %in% ls()))
-  validate_footprint_extent(xmn, xmx, ymn, ymx)
 
 # Disable grouping message from dplyr >=1.0.0
 options(dplyr.summarise.inform = F)

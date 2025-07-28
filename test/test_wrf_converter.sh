@@ -13,7 +13,7 @@ chmod +x r/stilt_cli.r
 
 echo "Running r/stilt_cli.r"
 r/stilt_cli.r \
-  r_run_time=2015-09-06T00:00:00Z \
+  r_time=2015-09-06T00:00:00Z \
   r_lati=40.5 \
   r_long=-112.0 \
   r_zagl=5 \

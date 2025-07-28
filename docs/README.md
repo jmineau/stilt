@@ -12,6 +12,13 @@
 
 ---
 
+> **:warning: WARNING:**  
+> 
+> This is the documentation for the **`jmineau` branch** of STILT, which contains recent changes to the model.  
+> For the original R version of STILT, see [uataq/stilt](https://uataq.github.io/stilt/).
+
+---
+
 STILT is an open source lagrangian particle dispersion model which is widely used to simulate the transport of pollution and greenhouse gases through the atmosphere. STILT extends NOAA ARL's popular HYSPLIT model to simplify atmospheric modeling workflows and improve simulation accuracy. Compared to the HYSPLIT model, STILT -
 
 - improves estimates of boundary layer height and vertical mixing

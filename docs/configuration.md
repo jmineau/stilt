@@ -1,17 +1,23 @@
 ## STILT configuration
 
-The following parameters are found in `r/run_stilt.r` and are used to configure STILT. These settings are used to adjust model parameters, execute parallelized simulations, and calculate produce upstream influence footprints.
+STILT is configured using a combination of a YAML file (`config.yaml`) and the main execution script (`run_stilt.r`).
+
+- **Most model, footprint, meteorological, transport, and error parameters are set in `config.yaml`.**
+- **System and parallelization settings (such as project directory, output directory, and SLURM options) are set directly in `run_stilt.r`.**
+
 
 ### System configuration
+These parameters are set directly in the `run_stilt.r` script, not in `config.yaml`:
 
 | Arg         | Description                                                                                     |
 | ----------- | ----------------------------------------------------------------------------------------------- |
-| `project`   | Project name. Defaults to the name of the directory specified in `uataq::stilt_init()`          |
-| `stilt_wd`  | Root directory of the STILT project. Defaults to the directory created by `uataq::stilt_init()` |
+| `project`   | Project name. Defaults to the name of the directory specified in `stilt_init()`          |
+| `stilt_wd`  | Root directory of the STILT project. Defaults to the directory created by `stilt_init()` |
 | `output_wd` | Directory containing simulation output files. Defaults to `<stilt_wd>/out/`                     |
 | `lib.loc`   | Path to installed R packages, passed to `library()`                                             |
 
 ### Parallel simulation settings
+These parameters are set directly in the `run_stilt.r` script, not in `config.yaml`:
 
 | Arg                  | Description                                                                                                                                                                               |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -23,25 +29,40 @@ The following parameters are found in `r/run_stilt.r` and are used to configure 
 
 ### Receptor placement
 
-| Arg             | Description                                                                                  |
-| --------------- | -------------------------------------------------------------------------------------------- |
-| `t_start/t_end` | Receptor time(s) to initialize simulations, formatted as `'yyyy-mm-dd HH:MM:SS'` UTC         |
-| `run_times`     | Hourly time increments spanning `t_start` through `t_end` of length _n_                      |
-| `lati`          | Receptor latitude(s), in degrees as a single value or a vector of length _n_                 |
-| `long`          | Receptor longitude(s), in degrees as a single value or a vector of length _n_                |
-| `zagl`          | Receptor height(s), in meters above ground level as a single value or a vector of length _n_ |
-| `receptors`     | Expands the combinations of time and location to generate the unqiue receptors               |
+Receptors are specified in a CSV file, by default located at `<stilt_wd>/in/receptors.csv`. The csv file must contain the columns `time`, `lati`, `long`, and `zagl`.
+> A helper function `generate_receptors()` is provided and can be used to generate a CSV for a grid of receptors.
 
-> Simulation timing and receptor locations are defined in this way for convenience and then expanded to contain the unique receptors in a _x_, _y_, _z_, _t_ table. To specify the receptors manually, a data frame named `receptors` can be given with column names `run_time` (POSIXct), `long` (numeric), `lati` (numeric), and `zagl` (numeric). If supplying `receptors` directly, the `t_start/t_end`, `run_times`, `lati`, `long`, and `zagl` parameters can be omitted.
+The CSV file is read into a data frame where each row corresponds to a receptor in space and time. Receptors are distributed to their own simulation. An additional column, `group`, can be used to group receptors together to create Column or MultiPoint receptors.
+
+A custom `receptor` object is created for each receptor, which is aware of its kind (e.g., Point, Column, MultiPoint). This allows for more flexible handling of different receptor types in the model.
 
 ```r
-str(receptors)
-# 'data.frame':	100 obs. of  4 variables:
-#   $ run_time: POSIXct, format: "2015-07-02 11:00:00" "2015-07-02 11:00:00" ...
-#   $ long    : num  -112 -112 -112 -112 -112 ...
-#   $ lati    : num  40.8 40.8 40.8 40.8 40.8 ...
-#   $ zagl    : num  5 5 5 5 5 5 5 5 5 5 ...
+receptor <- create_receptor(
+  time = as.POSIXct("2015-12-10 00:00:00"),
+  lati = 40.5,
+  long = -112.0,
+  zagl = 5
+)
+
+str(receptor)
+# List of 3
+#  $ time     : POSIXct[1:1], format: "2015-12-10"
+#  $ kind     : chr "Point"
+#  $ locations: tibble [1 × 3] (S3: tbl_df/tbl/data.frame)
+#   ..$ lati: num 40.5
+#   ..$ long: num -112
+#   ..$ zagl: num 5
 ```
+
+The different kinds of receptors are summarized in the table below:
+
+| Kind       | Description                                                                                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Point      | Single receptor at a specific time and location                                                                                                                                       |
+| Column     | A vertical column receptor at a specific time and lati/long between two zagl heights. Particles are distributed evenly between the two zagl heights                                   |
+| MultiPoint | Multiple point receptors at a specific time at different locations. Particles are divided evenly between the receptors. This can be useful for representing a *slant* column receptor |
+
+> Mixing of Point and Column receptors as well as MultiColumn receptors are not currently supported in this version of STILT, but are possible through HYSPLIT and can be implemented in the future. Additionally, the idea of an *area* receptor exists, but has not been implemented in any R version of STILT.
 
 ### Footprint calculation methods
 
@@ -78,11 +99,11 @@ str(receptors)
 | Arg             | Description                                                                                                                                                                                                                                                                     |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `n_hours`       | Number of hours to run each simulation; negative indicates backward in time                                                                                                                                                                                                     |
-| `numpar`        | number of particles to be run; defaults to 200                                                                                                                                                                                                                                  |
+| `numpar`        | number of particles to be run; defaults to 1000                                                                                                                                                                                                                                 |
 | `rm_dat`        | Logical indicating whether to delete `PARTICLE.DAT` after each simulation. Default to TRUE to reduce disk space since all of the trajectory information is also stored in trajectory parquet file alongside the calculated upstream influence footprint                         |
 | `run_foot`      | Logical indicating whether to produce footprints. If FALSE, `run_trajec` must be TRUE. This can be useful when calculating trajectories separate from footprints                                                                                                                |
 | `run_trajec`    | Logical indicating whether to produce new trajectories with `hycs_std`. If FALSE, will try to load the previous trajectory outputs. This is often useful for regridding purposes                                                                                                |
-| `simulation_id` | Optional string or template for simulation naming. If `NA` (default), a unique ID is generated based on time and receptor location. If a string with curly-brace placeholders (e.g., `myrun_{lati}_{long}_{zagl}_{run_time}`), these will be replaced with the actual values for each simulation. Supported placeholders: `{lati}`, `{long}`, `{zagl}`, `{run_time}` (formatted as `%Y%m%d%H%M`). |
+| `simulation_id` | Unique identifier for each simulation; defaults to NA which determines a unique identifier for each simulation by hashing the time and receptor location                                                                                                                                |
 | `timeout`       | number of seconds to allow `hycs_std` to complete before sending SIGTERM and moving to the next simulation; defaults to 3600 (1 hour)                                                                                                                                           |
 | `varsiwant`     | character vector of 4-letter `hycs_std` variables. Defaults to the minimum required variables including `'time', 'indx', 'long', 'lati', 'zagl', 'foot', 'mlht', 'pres', 'dens', 'samt', 'sigw', 'tlgr'`. Can optionally include options listed below.                                  |
 
@@ -123,9 +144,9 @@ str(receptors)
 | Arg           | Description                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `w_option`    | vertical motion calculation method. 0: use vertical velocity from data, 1: isob, 2: isen, 3: dens, 4: sigma; defaults to 0                                                                                                                                                                                                                                                                                                                   |
+| `z_top`       | top of model domain, in meters above ground level; defaults to 25000.0                                                                                                                                                                                                                                                                                                                                                                       |
 | `zicontroltf` | flag that specifies whether to scale the PBL heights in STILT uniformly in the entire model domain; defaults to 0. If set to 1, then STILT looks for a file called "ZICONTROL" that specifies the scaling for the PBL height. The first line indicates the number of hours that the PBL height will be changed, and each subsequent line indicates the scaling factor for that hour                                                          |
 | `ziscale`     | manually scale the mixed-layer height, with each element specifying a scaling factor for each simulation hour (ziscale can be of length that is smaller than abs(nhrs). A vector can be passed as a list (e.g. `ziscale <- list(rep(0.8, 24))` scales the mixed layer height to 80% for the first 24 hours of all simulations) or a list of vectors specific to each simulation (e.g. `ziscale <- rep(list(rep(0.8, 24)), nrow(receptors))`) |
-| `z_top`       | top of model domain, in meters above ground level; defaults to 25000.0                                                                                                                                                                                                                                                                                                                                                                       |
 
 > Additional arguments can be referenced in the [HYSPLIT user's guide](https://www.arl.noaa.gov/documents/reports/hysplit_user_guide.pdf)
 
@@ -147,8 +168,7 @@ This is an advanced option that can be used to inject user code into the simulat
 
 | Arg                | Description                                                                                                                                                                                                                                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `before_trajec`    | function that returns the `output` object and is executed prior to calculating the ensemble particle trajectories                                                                                                                                                                                 |
-| `before_footprint` | function that returns the `output` object and is executed prior to calculating the gridded fotprint but after calculating the ensmble's particle trajectories; see [correcting for meteorological mass violation](https://github.com/uataq/stilt/issues/41#issuecomment-656174491) for an example |
+| `before_footprint` | function or path to function that returns the `output` object and is executed prior to calculating the gridded fotprint but after calculating the ensemble's particle trajectories; see [correcting for meteorological mass violation](https://github.com/uataq/stilt/issues/41#issuecomment-656174491) for an example |
 
 ---
 

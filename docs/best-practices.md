@@ -6,16 +6,16 @@ Here we detail a generalized workflow for executing STILT simulations and applyi
 
 ![STILT simple workflow](static/img/chart-workflow-simple.png)
 
-1. Initialize a **new STILT project** with `Rscript -e "uataq::stilt_init('myproject')"`
+1. Initialize a **new STILT project** with `stilt_init('myproject')`
 
-   > If the UATAQ package is not installed, see [Installation](installation.md).
+   > For details on initializing a STILT project, see [Installation](installation.md).
 
 1. Fetch **meteorological data** for simulations
 
    > NOAA ARL publishes gridded [data archives](https://www.ready.noaa.gov/archives.php) for many popular meteorological models. The High Resolution Rapid Refresh (HRRR) mesoscale model data in the ARL packed format required for STILT is available at [ftp://arlftp.arlhq.noaa.gov/pub/archives/hrrr/](ftp://arlftp.arlhq.noaa.gov/pub/archives/hrrr/). The coupling of the popular Weather Research and Forecasting (WRF) model with STILT is well documented by [Nehrkorn, 2010](https://link.springer.com/article/10.1007%2Fs00703-010-0068-x). ARL packed meteorological data files must be available to STILT on the local filesystem at the path given by the `met_path` parameter, see [configuration](configuration.md) for details.
 
-1. [Configure STILT](configure.md) using `r/run_stilt.r`
-1. Set _x_, _y_, _z_, _t_ coordinates for **receptor(s)**
+1. [**Configure STILT**](configure.md) using `config.yaml` and `r/run_stilt.r`
+1. Generate a **receptor CSV file** which includes receptor locations and times
 1. Define **footprint grid** domain and resolution
 1. Point to the **meteorological data** you downloaded
 1. Configure parallel execution, transport, and dispersion settings (optional)
