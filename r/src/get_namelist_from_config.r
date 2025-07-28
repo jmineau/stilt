@@ -88,7 +88,7 @@ get_namelist_from_config <- function(config) {
     wbwr = config$wbwr,
     winderrtf = config$winderrtf,
     wvert = config$wvert,
-    zicontroltf = config$zicontroltf,
+    zicontroltf = config$zicontroltf
   )
 
   return(namelist)

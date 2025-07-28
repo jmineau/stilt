@@ -343,7 +343,7 @@ simulation_step <- function(
       horcorzierr = horcorzierr,
       winderrtf = 0,
       # User defined functions
-      before_footprint = before_footprint_file,
+      before_footprint = before_footprint_file
     )
     config_file <- file.path(simulation_dir, paste0(simulation_id, '_config.yaml'))
     do.call(write_config, merge_lists(config, list(file=config_file)))
