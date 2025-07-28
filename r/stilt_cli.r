@@ -196,7 +196,7 @@ stilt_args <- list(
     tluverr = as.numeric(args$tluverr),
     tlzierr = as.numeric(args$tlzierr),
     # User defined functions
-    before_footprint = as.character(args$before_footprint),
+    before_footprint = as.character(args$before_footprint)
 )
 stilt_args <- stilt_args[sapply(stilt_args, function(x) length(x) > 0)]
 source(file.path(stilt_args$stilt_wd, 'r', 'src', 'simulation_step.r'))

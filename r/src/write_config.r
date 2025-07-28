@@ -137,7 +137,7 @@ write_config <- function(
     system = list(
       project = basename(stilt_wd),
       stilt_wd = stilt_wd,
-      output_wd = output_wd,
+      output_wd = output_wd
     ),
     model = list(
       n_hours = n_hours,
@@ -147,13 +147,13 @@ write_config <- function(
       run_trajec = run_trajec,
       simulation_id = simulation_id,
       timeout = timeout,
-      varsiwant = varsiwant,
+      varsiwant = varsiwant
     ),
     receptors = list(
       time = r_time,
       lati = r_lati,
       long = r_long,
-      zagl = r_zagl,
+      zagl = r_zagl
     ),
     footprint = list(
       hnf_plume = hnf_plume,
@@ -175,7 +175,7 @@ write_config <- function(
       met_subgrid_enable = met_subgrid_enable,
       met_subgrid_buffer = met_subgrid_buffer,
       met_subgrid_levels = met_subgrid_levels,
-      n_met_min = n_met_min,
+      n_met_min = n_met_min
     ),
     transport = list(
       capemin = capemin,
@@ -251,7 +251,7 @@ write_config <- function(
       wvert = wvert,
       z_top = z_top,
       zicontroltf = zicontroltf,
-      ziscale = ziscale,
+      ziscale = ziscale
     ),
     error = list(
       siguverr = siguverr,
@@ -263,12 +263,12 @@ write_config <- function(
       horcorzierr = horcorzierr
     ),
     user_funcs = list(
-      before_footprint = before_footprint,
+      before_footprint = before_footprint
     ),
     metadata = list(
       time_created = Sys.time(),
       git_url = system('git config --get remote.origin.url', intern = TRUE),
-      git_commit = find_git_commit_id(),
+      git_commit = find_git_commit_id()
     )
   )
 

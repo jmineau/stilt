@@ -98,7 +98,7 @@ args <- list(
   r_time = receptors$time,
   r_lati = receptors$lati,
   r_long = receptors$long,
-  r_zagl = receptors$zagl,
+  r_zagl = receptors$zagl
 )
 args <- merge_lists(args, config)  # config overrides args
 do.call(stilt_apply, args)
