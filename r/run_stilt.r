@@ -44,6 +44,11 @@ for (k in c("model", "footprint", "met", "transport", "error", "user_funcs")) {
 # Remove null values from config to use default simulation_step arguments
 config <- config[!sapply(config, is.null)]
 
+# Bundle varsiwant into a single list for simulation_step
+if (!is.null(config$varsiwant)) {
+  config$varsiwant <- list(config$varsiwant)
+}
+
 # Interface to mutate the output object with user defined function
 # before_footprint <- config$user_funcs$before_footprint
 # if (is.na(before_footprint)) {
