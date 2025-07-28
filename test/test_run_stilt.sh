@@ -48,5 +48,6 @@ rm out/by-id/201512100000_-112_40.5_5/*
 rm out/footprints/*
 rm out/particles/*
 rm r/run_stilt.r.bak
+rm r/config.yaml.bak
 
 echo "run_stilt.r test successful"

@@ -34,13 +34,12 @@ source('r/dependencies.r')
 config <- read_yaml(config_file)
 
 # Unnest the first level of lists in config
-config <- merge_lists(config, config$model, config$footprint, config$met, config$transport, config$error, config$user_funcs)
-config$model <- NULL
-config$footprint <- NULL
-config$met <- NULL
-config$transport <- NULL
-config$error <- NULL
-config$user_funcs <- NULL
+for (k in c("model", "footprint", "met", "transport", "error", "user_funcs")) {
+  if (!is.null(config[[k]])) {
+    config <- merge_lists(config, config[[k]])
+    config[[k]] <- NULL
+  }
+}
 
 # Remove null values from config to use default simulation_step arguments
 config <- config[!sapply(config, is.null)]
