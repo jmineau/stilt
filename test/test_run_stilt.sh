@@ -19,7 +19,7 @@ sed -i'.bak' -e 's|ymn:.*|ymn: 39.5|' config.yaml
 sed -i'.bak' -e 's|ymx:.*|ymx: 41.5|' config.yaml
 
 # Set met_path
-sed -i'.bak' -e "s|met_path:.*|met_path: 'stilt-tutorials/01-wbb/met'|" config.yaml
+sed -i'.bak' -e "s|met_path:.*|met_path: '$(pwd)/stilt-tutorials/01-wbb/met'|" config.yaml
 
 # Minimize run duration
 sed -i'.bak' -e 's|n_hours:.*|n_hours: -6|' config.yaml
