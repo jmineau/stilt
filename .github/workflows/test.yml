@@ -44,14 +44,23 @@ jobs:
       - name: Install STILT
         run: bash test/test_setup.sh
 
-      - name: Run batch simulation test
+      - name: Run run_stilt point receptor test
         run: bash test/test_run_stilt.sh
+
+      - name: Run run_stilt column receptor test
+        run: bash test/test_run_stilt_column.sh
+
+      - name: Run run_stilt multipoint receptor test
+        run: bash test/test_run_stilt_multipoint.sh
 
       - name: Run CLI test
         run: bash test/test_stilt_cli.sh
 
       - name: Run CLI column receptor test
-        run: bash test/test_stilt_cli.sh
+        run: bash test/test_stilt_cli_column.sh
+
+      - name: Run CLI multipoint receptor test
+        run: bash test/test_stilt_cli_multipoint.sh
 
       - name: Run WRF test
         run: bash test/test_wrf_converter.sh

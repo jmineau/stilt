@@ -11,12 +11,19 @@ sed -i'.bak' -e 's|{{project}}|stilt-test|g' r/run_stilt.r
 sed -i'.bak' -e "s|file.path('{{wd}}', project)|getwd()|g" r/run_stilt.r
 
 # Set receptor and footprint information
-Rscript r/generate_receptors.r
+mkdir -p in
+cat > in/receptors.csv <<EOF
+time,lati,long,zagl,group
+2015-12-10 00:00:00,40.5,-112,0,group1
+2015-12-10 00:00:00,41,-111.5,500,group1
+2015-12-10 00:00:00,41.5,-111,1000,group1
+EOF
+
 sed -i'.bak' -e 's|xmn:.*|xmn: -113|' config.yaml
-sed -i'.bak' -e 's|xmx:.*|xmx: -111|' config.yaml
+sed -i'.bak' -e 's|xmx:.*|xmx: -110.5|' config.yaml
 sed -i'.bak' -e 's|xres:.*|xres: 0.01|' config.yaml
 sed -i'.bak' -e 's|ymn:.*|ymn: 39.5|' config.yaml
-sed -i'.bak' -e 's|ymx:.*|ymx: 41.5|' config.yaml
+sed -i'.bak' -e 's|ymx:.*|ymx: 42|' config.yaml
 
 # Set met_path
 sed -i'.bak' -e "s|met_path:.*|met_path: '$(pwd)/stilt-tutorials/01-wbb/met'|" config.yaml
@@ -28,7 +35,8 @@ echo "Running r/run_stilt.r"
 Rscript r/run_stilt.r
 
 # Check output
-model_output=$(ls out/by-id/201512100000_-112_40.5_5/201512100000_-112_40.5_5* | wc -l)
+simulation_id="201512100000_multi_c24aac91594d9fdd86a754624e73496b"
+model_output=$(ls out/by-id/$(simulation_id)/$(simulation_id)* | wc -l)
 if [ $model_output -lt 2 ]; then
   echo "Model output not found."
 
@@ -36,16 +44,16 @@ if [ $model_output -lt 2 ]; then
   cat r/run_stilt.r
 
   echo "stilt.log:"
-  cat out/by-id/201512100000_-112_40.5_5/stilt.log
+  cat out/by-id/$(simulation_id)/stilt.log
   exit 1
 fi
 
 echo "out/by-id/<id> contents:"
-ls -lh out/by-id/201512100000_-112_40.5_5
+ls -lh out/by-id/$(simulation_id)
 
 echo "Removing model outputs"
-rm in/receptors.csv
-rm out/by-id/201512100000_-112_40.5_5/*
+rm -r in
+rm out/by-id/$(simulation_id)/*
 rm out/footprints/*
 rm out/particles/*
 rm r/run_stilt.r.bak
