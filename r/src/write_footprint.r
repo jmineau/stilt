@@ -21,9 +21,9 @@
 
 write_footprint <- function(foot, output, receptor, glong, glati, projection,
                             time_out, xres, yres) {
-  
+
   is_longlat <- grepl('+proj=longlat', projection, fixed = T)
-  
+
   # CF projection name lookup table
   cf_proj_names <- c('aea'     = 'albers_conical_equal_area',
                      'aeqd'    = 'azimuthal_equidistant',
@@ -39,7 +39,7 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
                      'ups'     = 'polar_stereographic',
                      'stere'   = 'stereographic',
                      'tmerc'   = 'transverse_mercator')
-  
+
   # CF projection attributes lookup table
   cf_proj_attrs <- c('h'      = 'perspective_point_height',
                      'k0'     = 'scale_factor_at_central_meridian',
@@ -50,11 +50,11 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
                      'y_0'    = 'false_northing',
                      'lat_1'  = 'standard_parallel',
                      'lat_2'  = 'standard_parallel')
-  
+
   # Define projection name
   proj <- regmatches(projection, regexpr('\\+proj=[^ ]+', projection))
   ncdf_proj_name <- cf_proj_names[strsplit(proj, '=')[[1]][2]]
-  
+
   # Define projection attributes
   projection_attrs <- gsub('\\+proj=[^ ]+ |\\+', '', projection) %>%
     (function(x) strsplit(x, '\\s+')[[1]]) %>%
@@ -68,16 +68,16 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
                                     append(ncdf_proj_attr[[key]], val),
                                     val)
   }
-  
-  
+
+
   # Save footprint fo file
   if (!is.null(output) && file.exists(output))
     system(paste('rm', output))
-  
+
   # netCDF output
   if (!is.null(output) && grepl('\\.nc$', output, ignore.case = T) &&
       'ncdf4' %in% names(sessionInfo()$otherPkgs)) {
-    
+
     # xy dimensions in lat/lon or alternative projection
     if (is_longlat) {
       xdim <- ncdim_def('lon', 'degrees_east', glong + xres/2)
@@ -91,8 +91,8 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
                       as.numeric(time_out))
     fvar <- ncvar_def('foot', 'ppm (umol-1 m2 s)',
                       list(xdim, ydim, tdim), -1)
-    
-    
+
+
     # Projection specific xy definitions
     if (is_longlat) {
       nc <- nc_create(output, list(fvar), force_v4 = T)
@@ -112,17 +112,17 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
         ncatt_put(nc, 'projection', i, ncdf_proj_attr[[i]])
       }
     }
-    
+
     # Insert footprint data
     ncvar_put(nc, fvar, foot)
-    
+
     ncatt_put(nc, 'time', 'standard_name', 'time')
     ncatt_put(nc, 'time', 'long_name', 'utc time')
     ncatt_put(nc, 'time', 'calendar', 'standard')
-    
+
     ncatt_put(nc, 'foot', 'standard_name', 'footprint')
     ncatt_put(nc, 'foot', 'long_name', 'stilt surface influence footprint')
-    
+
     ncatt_put(nc, 0, 'crs', projection)
     ncatt_put(nc, 0, 'crs_format', 'PROJ.4')
     ncatt_put(nc, 0, 'documentation', 'github.com/uataq/stilt')
@@ -132,12 +132,12 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
     ncatt_put(nc, 0, 'r_lati', receptor$locations$lati)
     ncatt_put(nc, 0, 'r_long', receptor$locations$long)
     ncatt_put(nc, 0, 'r_zagl', receptor$locations$zagl)
-    
+
     nc_close(nc)
     return(output)
   }
-  
-  # List output opbject
+
+  # List output object
   out_custom <- list(
     lon = list(unit = 'degrees_east',
                values = glong),
@@ -151,11 +151,9 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
                      values = foot),
     attributes = list(crs = '+proj=longlat +ellpsWGS84',
                       crs_format = 'PROJ.4',
-                      conventions = 'CF-1.4',
-                      documentation = 'uataq.github.io/stilt',
-                      title = 'STILT Footprint Output')
+                      conventions = 'CF-1.4')
   )
-  
+
   # Alternative .csv output
   if (!is.null(output) && grepl('\\.csv$', output, ignore.case = T)) {
     csv <- expand.grid(longitude = glong, latitude  = glati) %>%
@@ -168,13 +166,13 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
     write.table(csv, append = T, quote = F, sep = ',', row.names = F)
     return(output)
   }
-  
+
   # Alternative .rds output
   if (!is.null(output) && grepl('\\.rds$', output, ignore.case = T)) {
     saveRDS(out_custom, output)
     return(output)
   }
-  
+
   # No file output - return list object
   invisible(out_custom)
 }

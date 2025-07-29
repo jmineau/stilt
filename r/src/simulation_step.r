@@ -195,15 +195,21 @@ simulation_step <- function(
 
     # Build the simulation id from receptor info
     if (is.na(simulation_id) || is.null(simulation_id) || simulation_id == '') {
-      if (receptor$kind == "Point" || receptor$kind == "Column") {
-        simulation_id_format <- paste0('%Y%m%d%H%M_', r_long, '_', r_lati, '_', 
-                                       ifelse(length(r_zagl) > 1, 'X', r_zagl))
+      if (receptor$kind == "Point") {
+        simulation_id_format <- paste0('%Y%m%d%H%M_',
+                                       r_long, '_', r_lati, '_', r_zagl)
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
-      } else {
+      } else if (receptor$kind == "Column") {
+        simulation_id_format <- paste0('%Y%m%d%H%M_',
+                                       r_long[1], '_', r_lati[1], '_X')
+        simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
+      } else if (receptor$kind == "MultiPoint") {
         # Generate a unique simulation ID based on md5 hash of receptor locations
         hash <- digest::digest(receptor$locations, algo = "md5")
         simulation_id_format <- paste0('%Y%m%d%H%M_multi_', hash)
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
+      } else {
+        stop("simulation_step(): Unsupported receptor kind: ", receptor$kind)
       }
     }
     if (grepl(.Platform$file.sep, simulation_id, fixed = TRUE)) {

@@ -24,7 +24,21 @@
   </a>
 </p>
 
-## `jmineau` changelog
+## `jmineau` Updates
+#### Major Changes
+ - YAML based configuration
+   - Receptors are now defined in a CSV file
+ - Parquet trajectory output
+ - Parallelized column/multipoint receptor support
+#### Minor Changes
+ - `foot_id` option for multi-footprint output per simulation
+ - `output_wd` is no longer removed, instead simulations are overwritten if the same `simulation_id` is used
+ - `simulation_id` for MultiPoint receptors are now generated based on a md5 hash of the receptor locations
+   - Would recommend users specify their own simulation ID for MultiPoint receptors
+   - Other ideas for generating simulation IDs are welcome :)
+ - 'traj' is now 'trajec' for clarity
+ - Bug fixes and docs & default updates
+#### Changelog
 - 2025-07-26 : Major changes to the input configuration system.
   - The configuration file is now a YAML file named `config.yaml` located in the working directory. This file contains all the necessary parameters for running STILT simulations, including model settings, receptor information, and trajectory options.
   - A corresponding simulation config yaml file is generated in each simulation directory, which includes all the parameters used for that specific simulation. This ensures reproducibility and allows users to easily review or share their simulation settings. We no longer write a `config.json` file. As long as the input parameters are valid, the config yaml file is written first and can be used to identify simulation directories.

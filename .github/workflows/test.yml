@@ -53,7 +53,7 @@ jobs:
       - name: Run run_stilt multipoint receptor test
         run: bash test/test_run_stilt_multipoint.sh
 
-      - name: Run CLI test
+      - name: Run CLI point receptor test
         run: bash test/test_stilt_cli.sh
 
       - name: Run CLI column receptor test
