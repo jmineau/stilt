@@ -402,7 +402,7 @@ simulation_step <- function(
         namelist = get_namelist_from_config(config),
         emisshrs = emisshrs,
         hnf_plume = hnf_plume,
-        met_files = cmet_files,
+        met_files = met_files,
         n_hours = n_hours,
         receptor = receptor,
         rm_dat = rm_dat,

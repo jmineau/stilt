@@ -4,6 +4,7 @@
 #' Writes a YAML configuration file for STILT simulations.
 #' The configuration file contains all the necessary parameters for reproducing a STILT simulation.
 #'
+#' @import yaml
 #' @export
 
 write_config <- function(
@@ -133,6 +134,8 @@ write_config <- function(
   file,
   ...
 ) {
+  require(yaml)
+
   config <- list(
     system = list(
       project = basename(stilt_wd),
@@ -266,11 +269,18 @@ write_config <- function(
       before_footprint = before_footprint
     ),
     metadata = list(
-      time_created = Sys.time(),
+      time_created = format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ"),
       git_url = system('git config --get remote.origin.url', intern = TRUE),
       git_commit = find_git_commit_id()
     )
   )
 
-  write_yaml(config, file)
+  # Generate the YAML string from the config list
+  yaml_str <- as.yaml(config, indent.mapping.sequence = TRUE)
+  yaml_str <- gsub(" (\\.na|~)\n", " null\n", yaml_str)  # Replace .na or ~ with null
+  yaml_str <- gsub(" yes\n", " true\n", yaml_str)  # Replace yes with true
+  yaml_str <- gsub(" no\n", " false\n", yaml_str)  # Replace no with false
+
+  # Write the YAML string to the specified file
+  writeLines(yaml_str, file)
 }

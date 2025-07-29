@@ -31,30 +31,17 @@ source('r/dependencies.r')
 
 
 # Load configuration YAML file -------------------------------------------------
-config <- read_yaml(config_file)
+config <- read_config(config_file)
 
-# Unnest the first level of lists in config
-for (k in c("model", "footprint", "met", "transport", "error", "user_funcs")) {
-  if (!is.null(config[[k]])) {
-    config <- merge_lists(config, config[[k]])
-    config[[k]] <- NULL
-  }
-}
-
-# Remove null values from config to use default simulation_step arguments
-config <- config[!sapply(config, is.null)]
-
-# Bundle varsiwant into a single list for simulation_step
+# Bundle varsiwant into a single list
 if (!is.null(config$varsiwant)) {
   config$varsiwant <- list(config$varsiwant)
 }
 
-# Interface to mutate the output object with user defined function
-# before_footprint <- config$user_funcs$before_footprint
-# if (is.na(before_footprint)) {
-#   # Set a default function that returns 'output'
-#   before_footprint <- function() { output }
-# }
+if (is.function(config$before_footprint)) {
+  # Functions must be wrapped in a list for stilt_apply
+  config$before_footprint <- list(config$before_footprint)
+}
 
 
 # Load receptors from CSV file -------------------------------------------------
