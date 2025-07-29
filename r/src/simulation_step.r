@@ -201,7 +201,7 @@ simulation_step <- function(
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else if (receptor$kind == "Column") {
         simulation_id_format <- paste0('%Y%m%d%H%M_',
-                                       r_long[1], '_', r_lati[1], '_X')
+                                       r_long[[1]], '_', r_lati[[1]], '_X')
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else if (receptor$kind == "MultiPoint") {
         # Generate a unique simulation ID based on md5 hash of receptor locations
