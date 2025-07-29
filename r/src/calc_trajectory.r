@@ -74,8 +74,8 @@ calc_trajectory <- function(namelist,
   # For Column & MultiPoint trajectories, preserve release height as xhgt
   if (receptor$kind == "Column") {
     # Particles are distributed vertically in a layer between the bottom and top
-    xhgt_min <- min(receptor$zagl)
-    xhgt_max <- max(receptor$zagl)
+    xhgt_min <- min(receptor$locations$zagl)
+    xhgt_max <- max(receptor$locations$zagl)
     xhgt_rng <- xhgt_max - xhgt_min
     xhgt_step <- xhgt_rng / numpar
 
@@ -103,7 +103,7 @@ calc_trajectory <- function(namelist,
   # approximation and recalculate footprint sensitivity for cases when the
   # plume height is less than the PBL height scaled by veght
   if (hnf_plume) {
-    p <- calc_plume_dilution(p, numpar, receptor$zagl, namelist[['veght']])
+    p <- calc_plume_dilution(p, numpar, receptor$locations$zagl, namelist[['veght']])
   }
 
   if (!is.null(file))  {
