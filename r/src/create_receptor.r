@@ -41,7 +41,7 @@ create_receptor <- function(time, lati, long, zagl) {
       is_min | is_max
     ) %>%
     ungroup() %>%
-    select(-is_min, -is_max)
+    dplyr::select(-is_min, -is_max)
 
   # Determine kind
   loc_summary <- locations %>%
