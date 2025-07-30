@@ -37,8 +37,7 @@ load_libs <- function(..., lib.loc = NULL) {
         # Try installing from CRAN
         try(
           suppressWarnings(
-            install.packages(pkg, repo = repo, lib = lib.loc,
-                             dependencies = T)
+            install.packages(pkg, repo = repo, lib = lib.loc)
           )
         )
         # If the package is not found on CRAN
