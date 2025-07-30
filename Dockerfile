@@ -40,7 +40,7 @@
 #     ymx=40.95 \
 #     yres=0.01
 
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 WORKDIR /app
 
@@ -69,7 +69,6 @@ RUN apt-get update -yq \
 COPY . /app
 
 RUN bash setup 3
-RUN Rscript -e "install.packages('purrr')"
 RUN Rscript r/dependencies.r
 
 VOLUME ["/app/met", "/app/out"]
