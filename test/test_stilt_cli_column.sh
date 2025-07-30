@@ -8,6 +8,8 @@ set -e
 
 chmod +x r/stilt_cli.r
 
+simulation_id="test-column"
+
 echo "Running r/stilt_cli.r"
 r/stilt_cli.r \
   r_time=2015-12-10T00:00:00Z \
@@ -23,24 +25,24 @@ r/stilt_cli.r \
   ymn=39.5 \
   ymx=41.5 \
   yres=0.01 \
-  simulation_id=test-column
+  simulation_id=${simulation_id}
 
 # Check output
-model_output=$(ls out/by-id/test-column/test-column* | wc -l)
+model_output=$(ls out/by-id/${simulation_id}/${simulation_id}* | wc -l)
 if [ $model_output -lt 2 ]; then
   echo "Model output not found."
 
   echo "stilt.log:"
-  cat out/by-id/test-column/stilt.log
+  cat out/by-id/${simulation_id}/stilt.log
   exit 1
 fi
 
 echo "out/by-id/<id> contents:"
-ls -lh out/by-id/test-column
+ls -lh out/by-id/${simulation_id}
 
 echo "Removing model outputs"
-rm out/by-id/test-column/*
-rm out/footprints/*
-rm out/particles/*
+rm -r out/by-id/${simulation_id}
+rm out/footprints/${simulation_id}*
+rm out/particles/${simulation_id}*
 
 echo "stilt_cli.r test successful"

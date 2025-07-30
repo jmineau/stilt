@@ -34,7 +34,8 @@ echo "Running r/run_stilt.r"
 Rscript r/run_stilt.r
 
 # Check output
-model_output=$(ls out/by-id/201512100000_-112_40.5_X/201512100000_-112_40.5_X* | wc -l)
+simulation_id="201512100000_-112_40.5_X"
+model_output=$(ls out/by-id/${simulation_id}/${simulation_id}* | wc -l)
 if [ $model_output -lt 2 ]; then
   echo "Model output not found."
 
@@ -42,19 +43,19 @@ if [ $model_output -lt 2 ]; then
   cat r/run_stilt.r
 
   echo "stilt.log:"
-  cat out/by-id/201512100000_-112_40.5_X/stilt.log
+  cat out/by-id/${simulation_id}/stilt.log
   exit 1
 fi
 
 echo "out/by-id/<id> contents:"
-ls -lh out/by-id/201512100000_-112_40.5_X
+ls -lh out/by-id/${simulation_id}
 
 echo "Removing model outputs"
-rm -r in
-rm out/by-id/201512100000_-112_40.5_X/*
-rm out/footprints/*
-rm out/particles/*
+rm -r out/by-id/${simulation_id}
+rm out/footprints/${simulation_id}*
+rm out/particles/${simulation_id}*
 rm r/run_stilt.r.bak
 rm config.yaml.bak
+rm -r in
 
 echo "run_stilt.r test successful"
