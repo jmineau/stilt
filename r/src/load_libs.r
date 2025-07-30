@@ -22,9 +22,11 @@ load_libs <- function(..., lib.loc = NULL) {
   repo <- 'https://cran.rstudio.com/'
 
   load_check <- function(pkg, lib.loc) {
-    suppressWarnings(
-      require(pkg, character.only = T, quiet = T,
-              warn.conflicts = F, lib.loc = lib.loc)
+    suppressPackageStartupMessages(
+      suppressWarnings(
+        require(pkg, character.only = T, quietly = T,
+                warn.conflicts = F, lib.loc = lib.loc)
+      )
     )
   }
 
