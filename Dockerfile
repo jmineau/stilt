@@ -69,6 +69,7 @@ RUN apt-get update -yq \
 COPY . /app
 
 RUN bash setup 3
+RUN Rscript -e "install.packages('purrr')"
 RUN Rscript r/dependencies.r
 
 VOLUME ["/app/met", "/app/out"]

@@ -17,7 +17,6 @@ libs <- load_libs('arrow',
                   'lubridate',
                   'ncdf4',
                   'parallel',
-                  'purrr',  # needed by arrow
                   'raster',
                   'rslurm',
                   'R.utils',
