@@ -13,14 +13,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/uataq/stilt/actions?query=branch%3Amain">
-    <img src="https://github.com/uataq/stilt/workflows/Build%20+%20Test/badge.svg"/>
+  <a href="https://github.com/jmineau/stilt/actions?query=branch%3Ajmineau">
+    <img src="https://github.com/jmineau/stilt/workflows/Build%20+%20Test/badge.svg"/>
   </a>
   <a href="https://github.com/uataq/stilt/issues">
     <img src="https://img.shields.io/github/issues/uataq/stilt.svg"/>
   </a>
-  <a href="https://uataq.github.io/stilt/">
-    <img src="https://img.shields.io/website-up-down-green-red/http/uataq.github.io.svg?label=website"/>
+  <a href="https://jmineau.github.io/stilt/">
+    <img src="https://img.shields.io/website-up-down-green-red/http/jmineau.github.io/stilt.svg?label=website"/>
   </a>
 </p>
 
