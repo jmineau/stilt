@@ -205,8 +205,11 @@ simulation_step <- function(
                                        unlist(r_lati)[1], '_X')
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else if (receptor$kind == "MultiPoint") {
-        # Generate a unique simulation ID based on md5 hash of receptor locations
-        hash <- digest::digest(receptor$locations, algo = "md5")
+        # Generate a unique simulation ID based on md5 hash of receptor locations WKT
+        points <- sprintf("(%s %s %s)", receptor$locations$long,
+                          receptor$locations$lati, receptor$locations$zagl)
+        wkt_string <- paste0("MULTIPOINT Z (", paste(points, collapse = ", "), ")")
+        hash <- digest::digest(wkt_string, algo = "md5")
         simulation_id_format <- paste0('%Y%m%d%H%M_multi_', hash)
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else {
