@@ -35,7 +35,7 @@ echo "Running r/run_stilt.r"
 Rscript r/run_stilt.r
 
 # Check output
-simulation_id="201512100000_multi_c24aac91594d9fdd86a754624e73496b"
+simulation_id="201512100000_multi_45b2fe4303d950ab666d0340fb8f09da"
 model_output=$(ls out/by-id/${simulation_id}/${simulation_id}* | wc -l)
 if [ $model_output -lt 2 ]; then
   echo "Model output not found."
