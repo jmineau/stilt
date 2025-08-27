@@ -235,10 +235,7 @@ simulation_step <- function(
       stilt_wd = stilt_wd,
       output_wd = output_wd,
       # Receptor placement
-      r_lati = r_lati,
-      r_long = r_long,
-      r_time = r_time,
-      r_zagl = r_zagl,
+      receptor = receptor,
       # Footprint calculation methods
       hnf_plume = hnf_plume,
       projection = projection,

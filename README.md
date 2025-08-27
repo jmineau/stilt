@@ -40,6 +40,7 @@
  - Updated tests including updating docker image to use `debian:bookworm-slim`
  - Bug fixes and docs & default updates
 #### Changelog
+- 2025-08-27 : Write receptor information to a csv for each simulation
 - 2025-08-19 : Use WKT representation of multipoint locations to generate cross-platform md5 hash
 - 2025-07-29 : Updated docker image to use `debian:bookworm-slim`. This change ensures that the Docker image is built on a more recent and secure base image, which may include important security updates and performance improvements. Also, docker couldn't find an available version of `purrr` that worked with `arrow` on `debian:bullseye-slim`. This change resolves that issue.
 - 2025-07-26 : Major changes to the input configuration system.

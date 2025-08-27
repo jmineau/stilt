@@ -4,6 +4,7 @@
 #' Writes a YAML configuration file for STILT simulations.
 #' The configuration file contains all the necessary parameters for reproducing a STILT simulation.
 #'
+#' @import dplyr
 #' @import yaml
 #' @export
 
@@ -12,10 +13,7 @@ write_config <- function(
   stilt_wd,
   output_wd,
   # Receptor placement
-  r_time,
-  r_lati,
-  r_long,
-  r_zagl,
+  receptor,
   # Footprint calculation methods
   hnf_plume,
   projection,
@@ -134,8 +132,20 @@ write_config <- function(
   file,
   ...
 ) {
+  require(dplyr)
   require(yaml)
 
+  # Write receptor configuration to a csv
+  receptor_csv <- file.path(dirname(file), 'receptors.csv')
+  receptor_df <- receptor$locations
+  receptor_df$time <- format(receptor$time, "%Y-%m-%d %H:%M:%S")
+  if (receptor$kind != "Point") {
+    receptor_df$group <- "group1"
+  }
+  receptor_df <- receptor_df %>% dplyr::select(time, everything())
+  write.csv(receptor_df, receptor_csv, row.names = F, quote = F)
+
+  # Build configuration list
   config <- list(
     system = list(
       project = basename(stilt_wd),
@@ -152,12 +162,7 @@ write_config <- function(
       timeout = timeout,
       varsiwant = varsiwant
     ),
-    receptors = list(
-      time = r_time,
-      lati = r_lati,
-      long = r_long,
-      zagl = r_zagl
-    ),
+    receptors = receptor_csv,
     footprint = list(
       hnf_plume = hnf_plume,
       projection = projection,

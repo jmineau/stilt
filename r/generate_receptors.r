@@ -26,4 +26,4 @@ receptors <- expand.grid(time = receptor_times, lati = lati, long = long,
 
 # Write receptors to CSV
 dir.create(dirname(receptor_out_file), showWarnings = FALSE, recursive = TRUE)
-write.csv(receptors, receptor_out_file, row.names = F)
+write.csv(receptors, receptor_out_file, row.names = F, quote = F)
