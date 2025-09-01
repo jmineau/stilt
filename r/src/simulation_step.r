@@ -29,7 +29,6 @@ simulation_step <- function(
   ymn = NA,
   ymx = NA,
   yres = xres,
-  foot_id = '',
   # Meteorological data input
   met_path,
   met_file_format,
@@ -179,6 +178,8 @@ simulation_step <- function(
     environment(before_footprint) <- environment()
 
     # Vector style arguments passed as a list
+    xres <- unlist(xres)
+    yres <- unlist(yres)
     varsiwant <- unlist(varsiwant)
     ziscale <- unlist(ziscale)
 
@@ -247,7 +248,6 @@ simulation_step <- function(
       ymn = ymn,
       ymx = ymx,
       yres = yres,
-      foot_id = foot_id,
       # Meteorological data input
       met_path = met_path,
       met_file_format = met_file_format,
@@ -480,43 +480,64 @@ simulation_step <- function(
       }
     }
 
-    # Exit if not performing footprint calculations
-    if (!run_foot) return(output)
-
     # User defined function to mutate the output object
     output <- before_footprint(output)
+
+    # Exit if not performing footprint calculations
+    if (!run_foot) return(output)
 
     # Unload unnecessary varsiwant columns from memory
     footprint_varsiwant <- c('time', 'indx', 'long', 'lati', 'foot')
     output$particle <- output$particle[ , footprint_varsiwant]
 
-    # Produce footprint --------------------------------------------------------
-    # Aggregate the particle trajectory into surface influence footprints. This
-    # outputs a netcdf file containing the resultant footprint and various attributes
-    foot_id <- ifelse(foot_id == '', '', paste0('_', foot_id))
-    foot_file <- file.path(simulation_dir, paste0(simulation_id, foot_id, '_foot.nc'))
-    foot <- calc_footprint(output$particle, output = foot_file,
-                           receptor = receptor,
-                           projection = projection,
-                           smooth_factor = smooth_factor,
-                           time_integrate = time_integrate,
-                           xmn = xmn, xmx = xmx, xres = xres,
-                           ymn = ymn, ymx = ymx, yres = yres)
+    # Produce footprints -------------------------------------------------------
+    footprints <- list()
+    for (dx in xres) {  # Calculate footprint for each resolution
+      for (dy in yres) {
+        res <- paste0(dx, 'x', dy)
+
+        msg <- paste("Calculating footprint for resolution:", res)
+        cat(msg, '\n', file = file.path(simulation_dir, 'stilt.log'), append = TRUE)
+
+        foot_file <- file.path(simulation_dir,
+                               paste0(simulation_id, '_', res, '_foot.nc'))
+
+        # Aggregate the particle trajectory into surface influence footprints. This
+        # outputs a netcdf file containing the resultant footprint and various attributes
+        foot <- calc_footprint(output$particle, output = foot_file,
+                              receptor = receptor,
+                              projection = projection,
+                              smooth_factor = smooth_factor,
+                              time_integrate = time_integrate,
+                              xmn = xmn, xmx = xmx, xres = dx,
+                              ymn = ymn, ymx = ymx, yres = dy)
+
+        if (is.null(foot)) {
+          msg <- 'No non-zero footprint values found within the footprint domain.'
+          warning(msg)
+          cat(msg, '\n', file = file.path(simulation_dir, 'stilt.log'), append = T)
+          next
+        }
+
+        footprints[[res]] <- foot
+
+        # Symlink footprint to out/footprints
+        link_files(foot_file, file.path(output_wd, 'footprints'))
+      }
+    }
 
     # Unload trajectories from memory and trigger garbage collection
     rm(output)
     invisible(gc())
 
-    if (is.null(foot)) {
-      msg <- 'No non-zero footprint values found within the footprint domain.'
-      warning(msg)
-      cat(msg, '\n', file = file.path(simulation_dir, 'stilt.log'), append = T)
-      return()
+    # Return a single object if only one resolution, otherwise return the list
+    if (length(footprints) == 1) {
+      return(footprints[[1]])
+    } else if (length(footprints) > 1) {
+      return(footprints)
+    } else {
+      warning("No footprints were generated.")
+      return(NULL)
     }
-
-    # Symlink footprint to out/footprints
-    link_files(foot_file, file.path(output_wd, 'footprints'))
-
-    return(foot)
   })
 }

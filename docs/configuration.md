@@ -78,7 +78,6 @@ The different kinds of receptors are summarized in the table below:
 | `ymx`            | grid end latitude, in degrees from -180 to 180                                                                                                                                                                                                                                                                                                  |
 | `xres`           | resolution for longitude grid, in projection units (degrees for lat/lon, meters for other)                                                                                                                                                                                                                                                      |
 | `yres`           | resolution for latitude grid, in projection units (degrees for lat/lon, meters for other)                                                                                                                                                                                                                                                       |
-| `foot_id`        | Optional string to append to the simulation id. If set, the output will be named `<simulation_id>_<foot_id>_foot.nc`. Useful for distinguishing between different footprint calculations for the same trajectory output.                                                                                                                        |
 
 ### Meteorological data input
 

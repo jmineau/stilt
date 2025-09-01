@@ -31,7 +31,7 @@
  - Parquet trajectory output
  - Parallelized column/multipoint receptor support
 #### Minor Changes
- - `foot_id` option for multi-footprint output per simulation
+ - Multiple footprints can be generated per simulation for each resolution
  - `output_wd` is no longer removed, instead simulations are overwritten if the same `simulation_id` is used
  - `simulation_id` for MultiPoint receptors are now generated based on a md5 hash of the receptor locations WKT
    - Would recommend users specify their own simulation ID for MultiPoint receptors
@@ -40,6 +40,9 @@
  - Updated tests including updating docker image to use `debian:bookworm-slim`
  - Bug fixes and docs & default updates
 #### Changelog
+- 2025-09-01 : Removed `foot_id` in favor of only creating multiple footprints for multiple resolutions
+  - The footprint file structure is now '<simulation_id>_<xres>x<yres>_foot.nc'
+  - `simulation_step` will return a single footprint if only one resolution is specified, otherwise a named list of footprints is returned.
 - 2025-08-27 : Write receptor information to a csv for each simulation
 - 2025-08-19 : Use WKT representation of multipoint locations to generate cross-platform md5 hash
 - 2025-07-29 : Updated docker image to use `debian:bookworm-slim`. This change ensures that the Docker image is built on a more recent and secure base image, which may include important security updates and performance improvements. Also, docker couldn't find an available version of `purrr` that worked with `arrow` on `debian:bullseye-slim`. This change resolves that issue.

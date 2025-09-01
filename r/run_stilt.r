@@ -33,6 +33,14 @@ source('r/dependencies.r')
 # Load configuration YAML file -------------------------------------------------
 config <- read_config(config_file)
 
+# Bundle footprint resolutions into a list
+if (!is.null(config$footprint$xres)) {
+  config$footprint$xres <- list(config$footprint$xres)
+}
+if (!is.null(config$footprint$yres)) {
+  config$footprint$yres <- list(config$footprint$yres)
+}
+
 # Bundle varsiwant into a single list
 if (!is.null(config$varsiwant)) {
   config$varsiwant <- list(config$varsiwant)

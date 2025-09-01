@@ -16,14 +16,14 @@ out/
     <simulation_id>/
       <simulation_id>_config.yaml
       <simulation_id>_trajec.parquet
-      <simulation_id>_<foot_id>_foot.nc
+      <simulation_id>_<xres>x<yres>_foot.nc
       hycs_std
       SETUP.CFG
       CONTROL
       ...
     ...
   footprints/
-    <simulation_id>_<foot_id>_foot.nc
+    <simulation_id>_<xres>x<yres>_foot.nc
     ...
   particles/
     <simulation_id>_trajec.parquet
@@ -71,7 +71,7 @@ This becomes the working directory for each unique simulation, containing symbol
 
 STILT configuration is aggregated for each simulation into a single `<simulation_id>_config.yaml` file. This file contains all of input parameters for the simulation and enables reproducibility.
 
-STILT outputs two files for analysis. The trajectories of the particle ensemble are saved to a `<simulation_id>_trajec.parquet` file. Gridded footprints are saved to a `<simulation_id>_<foot_id>_foot.nc` file (where `foot_id` is optional and prepended with an underscore). For guidance on working with these output files, see [output files](output-files.md).
+STILT outputs two files for analysis. The trajectories of the particle ensemble are saved to a `<simulation_id>_trajec.parquet` file. Gridded footprints are saved to a `<simulation_id>_<xres>x<yres>_foot.nc` file. For guidance on working with these output files, see [output files](output-files.md).
 
 #### out/footprints/
 

@@ -27,7 +27,6 @@ footprint:
   ymn: null
   ymx: null
   yres: null
-  foot_id: ''
 
 met:
   met_path: '<path_to_arl_meteorological_data>'
@@ -125,3 +124,4 @@ error:
 
 user_funcs:
   before_footprint: null
+...

@@ -94,7 +94,6 @@ stilt_args <- list(
     ymn = as.numeric(args$ymn),
     ymx = as.numeric(args$ymx),
     yres = as.numeric(args$yres),
-    foot_id = as.character(args$foot_id),
     # Meteorological data input
     met_path = as.character(args$met_path),
     met_file_format = as.character(args$met_file_format),

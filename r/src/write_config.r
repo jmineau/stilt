@@ -25,7 +25,6 @@ write_config <- function(
   ymn,
   ymx,
   yres,
-  foot_id,
   # Meteorological data input
   met_path,
   met_file_format,
@@ -173,8 +172,7 @@ write_config <- function(
       xres = xres,
       ymn = ymn,
       ymx = ymx,
-      yres = yres,
-      foot_id = foot_id
+      yres = yres
     ),
     met = list(
       met_path = met_path,

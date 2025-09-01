@@ -53,6 +53,9 @@ jobs:
       - name: Run run_stilt multipoint receptor test
         run: bash test/test_run_stilt_multipoint.sh
 
+      - name: Run run_stilt multifoot test
+        run: bash test/test_run_stilt_multifoot.sh
+
       - name: Run CLI point receptor test
         run: bash test/test_stilt_cli.sh
 
