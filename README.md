@@ -16,8 +16,8 @@
   <a href="https://github.com/jmineau/stilt/actions?query=branch%3Ajmineau">
     <img src="https://github.com/jmineau/stilt/workflows/Build%20+%20Test/badge.svg"/>
   </a>
-  <a href="https://github.com/uataq/stilt/issues">
-    <img src="https://img.shields.io/github/issues/uataq/stilt.svg"/>
+  <a href="https://github.com/jmineau/stilt/issues">
+    <img src="https://img.shields.io/github/issues/jmineau/stilt.svg"/>
   </a>
   <a href="https://jmineau.github.io/stilt/">
     <img src="https://img.shields.io/website-up-down-green-red/http/jmineau.github.io/stilt.svg?label=website"/>
