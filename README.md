@@ -41,7 +41,7 @@
  - Bug fixes and docs & default updates
 #### Changelog
 - 2025-09-01 : Removed `foot_id` in favor of only creating multiple footprints for multiple resolutions
-  - The footprint file structure is now '<simulation_id>_<xres>x<yres>_foot.nc'
+  - The footprint file structure is now '<simulation_id>_\<xres>x\<yres>_foot.nc'
   - `simulation_step` will return a single footprint if only one resolution is specified, otherwise a named list of footprints is returned.
 - 2025-08-27 : Write receptor information to a csv for each simulation
 - 2025-08-19 : Use WKT representation of multipoint locations to generate cross-platform md5 hash
