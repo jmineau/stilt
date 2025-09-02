@@ -149,6 +149,10 @@ simulation_step <- function(
       stop("simulation_step(): xmn, xmx, xres, ymn, and ymx must be specified when met_subgrid_enable or run_foot is TRUE")
     }
 
+    if (length(xres) != length(yres)) {
+      stop("simulation_step(): xres and yres must have the same length")
+    }
+
     # Get before_footprint function
     if (!is.na(before_footprint)) {
       before_footprint_file <- file.path(stilt_wd, 'r', 'user', 'before_footprint.r')
@@ -492,38 +496,38 @@ simulation_step <- function(
 
     # Produce footprints -------------------------------------------------------
     footprints <- list()
-    for (dx in xres) {  # Calculate footprint for each resolution
-      for (dy in yres) {
-        res <- paste0(dx, 'x', dy)
 
-        msg <- paste("Calculating footprint for resolution:", res)
-        cat(msg, '\n', file = file.path(simulation_dir, 'stilt.log'), append = TRUE)
+    for (i in seq_along(xres)) {  # Iterate over paired resolutions
+      dx <- xres[i]
+      dy <- yres[i]
+      res <- paste0(dx, 'x', dy)
 
-        foot_file <- file.path(simulation_dir,
-                               paste0(simulation_id, '_', res, '_foot.nc'))
+      message(paste("Calculating footprint for resolution:", res))
 
-        # Aggregate the particle trajectory into surface influence footprints. This
-        # outputs a netcdf file containing the resultant footprint and various attributes
-        foot <- calc_footprint(output$particle, output = foot_file,
-                              receptor = receptor,
-                              projection = projection,
-                              smooth_factor = smooth_factor,
-                              time_integrate = time_integrate,
-                              xmn = xmn, xmx = xmx, xres = dx,
-                              ymn = ymn, ymx = ymx, yres = dy)
+      foot_file <- file.path(simulation_dir,
+                              paste0(simulation_id, '_', res, '_foot.nc'))
 
-        if (is.null(foot)) {
-          msg <- 'No non-zero footprint values found within the footprint domain.'
-          warning(msg)
-          cat(msg, '\n', file = file.path(simulation_dir, 'stilt.log'), append = T)
-          next
-        }
+      # Aggregate the particle trajectory into surface influence footprints. This
+      # outputs a netcdf file containing the resultant footprint and various attributes
+      foot <- calc_footprint(output$particle, output = foot_file,
+                            receptor = receptor,
+                            projection = projection,
+                            smooth_factor = smooth_factor,
+                            time_integrate = time_integrate,
+                            xmn = xmn, xmx = xmx, xres = dx,
+                            ymn = ymn, ymx = ymx, yres = dy)
 
-        footprints[[res]] <- foot
-
-        # Symlink footprint to out/footprints
-        link_files(foot_file, file.path(output_wd, 'footprints'))
+      if (is.null(foot)) {
+        msg <- 'No non-zero footprint values found within the footprint domain.'
+        warning(msg)
+        cat(msg, '\n', file = file.path(simulation_dir, 'stilt.log'), append = T)
+        next
       }
+
+      footprints[[res]] <- foot
+
+      # Symlink footprint to out/footprints
+      link_files(foot_file, file.path(output_wd, 'footprints'))
     }
 
     # Unload trajectories from memory and trigger garbage collection

@@ -14,7 +14,7 @@ sed -i'.bak' -e "s|file.path('{{wd}}', project)|getwd()|g" r/run_stilt.r
 Rscript r/generate_receptors.r
 sed -i'.bak' -e 's|xmn:.*|xmn: -113|' config.yaml
 sed -i'.bak' -e 's|xmx:.*|xmx: -111|' config.yaml
-sed -i'.bak' -e 's|xres:.*|xres: c(0.01, 0.05)|' config.yaml
+sed -i'.bak' -e 's|xres:.*|xres: [0.01, 0.05]|' config.yaml
 sed -i'.bak' -e 's|ymn:.*|ymn: 39.5|' config.yaml
 sed -i'.bak' -e 's|ymx:.*|ymx: 41.5|' config.yaml
 

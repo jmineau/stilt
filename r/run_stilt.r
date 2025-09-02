@@ -34,11 +34,11 @@ source('r/dependencies.r')
 config <- read_config(config_file)
 
 # Bundle footprint resolutions into a list
-if (!is.null(config$footprint$xres)) {
-  config$footprint$xres <- list(config$footprint$xres)
+if (!is.null(config$xres)) {
+  config$xres <- list(config$xres)
 }
-if (!is.null(config$footprint$yres)) {
-  config$footprint$yres <- list(config$footprint$yres)
+if (!is.null(config$yres)) {
+  config$yres <- list(config$yres)
 }
 
 # Bundle varsiwant into a single list
