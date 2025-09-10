@@ -145,7 +145,7 @@ simulation_step <- function(
     if (!run_trajec && !run_foot)
       stop('simulation_step(): Nothing to do, set run_trajec or run_foot to T')
 
-    if ((met_subgrid_enable || run_foot) && (is.na(xmn) || is.na(xmx) || is.na(xres) || is.na(ymn) || is.na(ymx))) {
+    if ((met_subgrid_enable || run_foot) && (is.na(xmn) || is.na(xmx) || any(is.na(xres)) || is.na(ymn) || is.na(ymx))) {
       stop("simulation_step(): xmn, xmx, xres, ymn, and ymx must be specified when met_subgrid_enable or run_foot is TRUE")
     }
 
