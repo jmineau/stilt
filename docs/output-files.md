@@ -3,7 +3,7 @@
 The model outputs can be found in the directory configured with `output_wd` (defaults to `<stilt_wd>/out/`, see [project structure](http://localhost:3000/#/project-structure)). The following files are produced for each simulation:
 
 - `<simulation_id>_config.yaml` — simulation configuration and metadata
-- `<simulation_id>_trajec.parquet` — particle trajectory data
+- `<simulation_id>_traj.parquet` — particle trajectory data
 - `<simulation_id>_error.parquet` — error data (if error parameters are specified)
 - `<simulation_id>_<xres>x<yres>_foot.nc` — gridded footprint values and metadata
 
@@ -26,14 +26,14 @@ See [project structure](project-structure.md?id=outby-id) for more information.
 
 ## Particle trajectories
 
-Particle trajectories containing each particle's position and characteristics over time are packaged and saved with the naming convention `<simulation_id>_trajec.parquet`. Preserving the particle trajectories enables regridding the footprints at a later time without the computational cost of recalculating particle trajectories.
+Particle trajectories containing each particle's position and characteristics over time are packaged and saved with the naming convention `<simulation_id>_traj.parquet`. Preserving the particle trajectories enables regridding the footprints at a later time without the computational cost of recalculating particle trajectories.
 
 This object can be loaded using `R` with `arrow::read_parquet()`
 
 ```r
 library(arrow)
 
-trajec <- read_parquet('<simulation_id>_trajec.parquet')
+trajec <- read_parquet('<simulation_id>_traj.parquet')
 str(trajec)
 # .Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	11712136 obs. of  12 variables:
 # ..$ time                : num [1:11712136] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...
@@ -57,7 +57,7 @@ or using `Python` with a combination of `pyarrow` and `pandas`
 import pandas as pd
 import pyarrow
 
-particle = pd.read_parquet('<simulation_id>_trajec.parquet')
+particle = pd.read_parquet('<simulation_id>_traj.parquet')
 particle.head()
 # |    |   time |   indx |   long |   lati |   zagl |    foot |   mlht |   pres |   dens |   samt |   sigw |   tlgr |   foot_no_hnf_dilution |
 # |---:|-------:|-------:|-------:|-------:|-------:|--------:|-------:|-------:|-------:|-------:|-------:|-------:|-----------------------:|

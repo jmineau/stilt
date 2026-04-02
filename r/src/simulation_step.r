@@ -362,7 +362,7 @@ simulation_step <- function(
     # Calculate particle trajectories ------------------------------------------
     # run_trajec determines whether to try using existing trajectory files or to
     # recycle existing files
-    trajec_file <- file.path(simulation_dir, paste0(simulation_id, '_trajec.parquet'))
+    trajec_file <- file.path(simulation_dir, paste0(simulation_id, '_traj.parquet'))
     error_file <- file.path(simulation_dir, paste0(simulation_id, '_error.parquet'))
     winderr_file <- file.path(simulation_dir, 'WINDERR')
     zierr_file <- file.path(simulation_dir, 'ZIERR')
