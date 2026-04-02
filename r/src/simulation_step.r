@@ -190,6 +190,11 @@ simulation_step <- function(
     # Ensure dependencies are loaded for current node/process
     source(file.path(stilt_wd, 'r/dependencies.r'), local = T)
 
+    # Round coordinates to prevent floating-point noise in sim_ids
+    r_lati <- round(unlist(r_lati), 5)
+    r_long <- round(unlist(r_long), 5)
+    r_zagl <- round(unlist(r_zagl))
+
     # Create receptor object
     receptor <- create_receptor(
       time = r_time,
@@ -206,8 +211,8 @@ simulation_step <- function(
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else if (receptor$kind == "Column") {
         simulation_id_format <- paste0('%Y%m%d%H%M_',
-                                       unlist(r_long)[1], '_',
-                                       unlist(r_lati)[1], '_X')
+                                       r_long[1], '_',
+                                       r_lati[1], '_X')
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else if (receptor$kind == "MultiPoint") {
         # Generate a unique simulation ID based on md5 hash of receptor locations WKT

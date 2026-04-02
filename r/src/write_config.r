@@ -134,15 +134,14 @@ write_config <- function(
   require(dplyr)
   require(yaml)
 
-  # Write receptor configuration to a csv
-  receptor_csv <- file.path(dirname(file), 'receptors.csv')
-  receptor_df <- receptor$locations
-  receptor_df$time <- format(receptor$time, "%Y-%m-%d %H:%M:%S")
-  if (receptor$kind != "Point") {
-    receptor_df$group <- "group1"
-  }
-  receptor_df <- receptor_df %>% dplyr::select(time, everything())
-  write.csv(receptor_df, receptor_csv, row.names = F, quote = F)
+  # Build inline receptor dict
+  receptor_inline <- list(
+    time = format(receptor$time, "%Y-%m-%dT%H:%M:%SZ"),
+    kind = tolower(receptor$kind),
+    lati = receptor$locations$lati,
+    long = receptor$locations$long,
+    zagl = receptor$locations$zagl
+  )
 
   # Build configuration list
   config <- list(
@@ -161,7 +160,7 @@ write_config <- function(
       timeout = timeout,
       varsiwant = varsiwant
     ),
-    receptors = receptor_csv,
+    receptor = receptor_inline,
     footprint = list(
       hnf_plume = hnf_plume,
       projection = projection,
