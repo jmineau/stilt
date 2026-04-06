@@ -107,6 +107,8 @@ calc_trajectory <- function(namelist,
   }
 
   if (!is.null(file))  {
+    # Add absolute datetime column (p$time is minutes from receptor time)
+    p$datetime <- receptor$time + p$time * 60
     # Write particle data to parquet file
     write_parquet(p, file)
   }
