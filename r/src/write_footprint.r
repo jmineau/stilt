@@ -20,7 +20,9 @@
 #' @export
 
 write_footprint <- function(foot, output, receptor, glong, glati, projection,
-                            time_out, xres, yres) {
+                            time_out, xres, yres,
+                            xmn, xmx, ymn, ymx,
+                            smooth_factor, time_integrate) {
 
   is_longlat <- grepl('+proj=longlat', projection, fixed = T)
 
@@ -132,6 +134,16 @@ write_footprint <- function(foot, output, receptor, glong, glati, projection,
     ncatt_put(nc, 0, 'r_lati', receptor$locations$lati)
     ncatt_put(nc, 0, 'r_long', receptor$locations$long)
     ncatt_put(nc, 0, 'r_zagl', receptor$locations$zagl)
+
+    ncatt_put(nc, 0, 'xmn', xmn)
+    ncatt_put(nc, 0, 'xmx', xmx)
+    ncatt_put(nc, 0, 'ymn', ymn)
+    ncatt_put(nc, 0, 'ymx', ymx)
+    ncatt_put(nc, 0, 'xres', xres)
+    ncatt_put(nc, 0, 'yres', yres)
+    ncatt_put(nc, 0, 'projection', projection)
+    ncatt_put(nc, 0, 'smooth_factor', smooth_factor)
+    ncatt_put(nc, 0, 'time_integrate', as.integer(time_integrate))
 
     nc_close(nc)
     return(output)

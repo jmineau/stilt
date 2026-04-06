@@ -147,6 +147,9 @@ calc_footprint <- function(p, output = NULL, receptor,
     mutate(rtime = time - (time_sign) * min(abs(time))) %>%
     ungroup()
   
+  # Preserve original grid bounds before potential projection remap
+  orig_xmn <- xmn; orig_xmx <- xmx; orig_ymn <- ymn; orig_ymx <- ymx
+
   # Translate x, y coordinates into desired map projection
   if (!is_longlat) {
     require(proj4)
@@ -261,5 +264,7 @@ calc_footprint <- function(p, output = NULL, receptor,
   write_footprint(foot, output = output, receptor = receptor,
                   glong = glong, glati = glati,
                   projection = projection, xres = xres, yres = yres,
-                  time_out = time_out)
+                  time_out = time_out,
+                  xmn = orig_xmn, xmx = orig_xmx, ymn = orig_ymn, ymx = orig_ymx,
+                  smooth_factor = smooth_factor, time_integrate = time_integrate)
 }

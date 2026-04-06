@@ -215,11 +215,19 @@ simulation_step <- function(
                                        r_lati[1], '_X')
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else if (receptor$kind == "MultiPoint") {
-        # Generate a unique simulation ID based on md5 hash of receptor locations WKT
-        points <- sprintf("(%s %s %s)", receptor$locations$long,
-                          receptor$locations$lati, receptor$locations$zagl)
-        wkt_string <- paste0("MULTIPOINT Z (", paste(points, collapse = ", "), ")")
-        hash <- digest::digest(wkt_string, algo = "md5")
+        # Generate a unique simulation ID based on SHA-256 hash of receptor
+        # locations using canonical JSON serialization (sorted by lon, lat, zagl)
+        # to match the Python implementation in PYSTILT receptors.py.
+        locs <- receptor$locations[order(receptor$locations$long,
+                                         receptor$locations$lati,
+                                         receptor$locations$zagl), ]
+        pts_list <- lapply(seq_len(nrow(locs)), function(i)
+          list(round(locs$long[i], 5),
+               round(locs$lati[i], 5),
+               as.integer(round(locs$zagl[i]))))
+        canonical <- jsonlite::toJSON(pts_list, auto_unbox = TRUE)
+        hash <- substr(digest::digest(canonical, algo = "sha256",
+                                      serialize = FALSE), 1, 10)
         simulation_id_format <- paste0('%Y%m%d%H%M_multi_', hash)
         simulation_id <- strftime(r_time, simulation_id_format, 'UTC')
       } else {
@@ -505,12 +513,25 @@ simulation_step <- function(
     for (i in seq_along(xres)) {  # Iterate over paired resolutions
       dx <- xres[i]
       dy <- yres[i]
-      res <- paste0(dx, 'x', dy)
 
-      message(paste("Calculating footprint for resolution:", res))
+      message(paste("Calculating footprint for resolution:", paste0(dx, 'x', dy)))
+
+      # Compute SHA-256 hash (first 10 chars) of fully-resolved footprint config,
+      # serialized as sorted compact JSON. Matches Python PYSTILT implementation.
+      fp_params <- list(
+        projection = projection,
+        smooth_factor = smooth_factor,
+        time_integrate = time_integrate,
+        xmn = xmn, xmx = xmx, xres = dx,
+        ymn = ymn, ymx = ymx, yres = dy
+      )
+      fp_canonical <- jsonlite::toJSON(fp_params[order(names(fp_params))],
+                                       auto_unbox = TRUE)
+      fp_hash <- substr(digest::digest(fp_canonical, algo = "sha256",
+                                       serialize = FALSE), 1, 10)
 
       foot_file <- file.path(simulation_dir,
-                              paste0(simulation_id, '_', res, '_foot.nc'))
+                              paste0(simulation_id, '_', fp_hash, '_foot.nc'))
 
       # Aggregate the particle trajectory into surface influence footprints. This
       # outputs a netcdf file containing the resultant footprint and various attributes
@@ -529,7 +550,7 @@ simulation_step <- function(
         next
       }
 
-      footprints[[res]] <- foot
+      footprints[[fp_hash]] <- foot
 
       # Symlink footprint to out/footprints
       link_files(foot_file, file.path(output_wd, 'footprints'))
