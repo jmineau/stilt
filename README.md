@@ -25,6 +25,9 @@
 </p>
 
 ## `jmineau` Updates
+
+Archival: As of May 12th, 2026, this repo is archived. Please refer to the original ([uataq/stilt](https://github.com/uataq/stilt)) or the superceding ([jmineau/PYSTILT](https://github.com/jmineau/PYSTILT)) repos.
+
 #### Major Changes
  - YAML based configuration
    - Receptors are now defined in a CSV file
